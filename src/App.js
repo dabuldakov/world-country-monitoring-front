@@ -15,9 +15,7 @@ export default function App() {
     const fetchDatas = async () => {
       const res = await fetch("https://datausa.io/api/data?drilldowns=Nation&measures=Population");
       const data = await res.json();
-      console.log(data);
       const filteredData = filterData(data?.data || []);
-      console.log(filteredData);
       setdata(filteredData);
     };
     fetchDatas();
