@@ -22,12 +22,12 @@ import {
           }}
         >
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="Year" />
+          <XAxis dataKey="date" />
           <YAxis />
           <Tooltip />
           <Legend />
-          <Bar dataKey="Year" fill="#8884d8" />
-          <Bar dataKey="Population" fill="#82ca9d" />
+          <Bar dataKey="date" fill="#8884d8" />
+          <Bar dataKey="amount" fill="#82ca9d" />
         </BarChart>
       </ResponsiveContainer>
     );

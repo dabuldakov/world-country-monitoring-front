@@ -24,11 +24,13 @@ import {
             }}
           >
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="Year" />
+            <XAxis dataKey="date" />
             <YAxis />
             <Tooltip />
             <Legend />
-            <Line type="monotone" dataKey="Population" stroke="#8884d8" activeDot={{ r: 8 }} />
+            <Line type="monotone" dataKey="amount" stroke="#8884d8" activeDot={{ r: 8 }} />
+            <Line type="monotone" dataKey="foreignExchange" label = "foreign exchange" stroke="#82ca9d" />
+            <Line type="monotone" dataKey="monetaryGold" label="monetary gold" stroke="#55ca9d" />
           </LineChart>
           </ResponsiveContainer>
         );

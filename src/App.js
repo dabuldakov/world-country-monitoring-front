@@ -7,15 +7,14 @@ export default function App() {
 
   const filterData = (data) => {
     return data
-    .map(({ Year, Population }) => ({ Year, Population }))
-    .sort((a, b) => a.Year - b.Year);
+    .sort((a, b) => a.date - b.date);
   };
 
   useEffect(() => {
     const fetchDatas = async () => {
-      const res = await fetch("https://datausa.io/api/data?drilldowns=Nation&measures=Population");
+      const res = await fetch("http://localhost:8080/api/wcm/v0/international-reserve/country/RUS");
       const data = await res.json();
-      const filteredData = filterData(data?.data || []);
+      const filteredData = filterData(data || []);
       setdata(filteredData);
     };
     fetchDatas();
