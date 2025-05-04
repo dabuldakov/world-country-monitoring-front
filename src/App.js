@@ -12,7 +12,7 @@ export default function App() {
 
   useEffect(() => {
     const fetchDatas = async () => {
-      const res = await fetch("http://api/api/wcm/v0/international-reserve/country/RUS");
+      const res = await fetch("/api/api/wcm/v0/international-reserve/country/RUS");
       const data = await res.json();
       const filteredData = filterData(data || []);
       setdata(filteredData);
