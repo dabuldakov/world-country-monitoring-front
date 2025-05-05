@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-import BarColumn from "./chart/BarColumn";
 import SimpleLine from "./chart/SimpleLine";
+import SimpleLineGross from "./chart/SimpleLineGross";
 
 export default function App() {
   const [data, setdata] = useState();
+  const [grossData, setGrossData] = useState();
   const [countries, setCountries] = useState(["RUS", "USA", "CHN", "IND"]);
   const [selectedCountry, setSelectedCountry] = useState("RUS");
 
@@ -13,16 +14,25 @@ export default function App() {
   };
 
   const baseUrl = process.env.API_URL || 'http://localhost:8080';
-  const countryApi = 'api/wcm/v0/international-reserve/country';
+  const reservesApi = 'api/wcm/v0/international-reserve/country';
+  const grossProductApi = 'api/wcm/v0/gross-domestic-product/country';
 
   useEffect(() => {
-    const fetchDatas = async () => {
-      const res = await fetch(`${baseUrl}/${countryApi}/${selectedCountry}`);
+    const fetchDataReserves = async () => {
+      const res = await fetch(`${baseUrl}/${reservesApi}/${selectedCountry}`);
       const data = await res.json();
       const filteredData = filterData(data || []);
       setdata(filteredData);
     };
-    fetchDatas();
+    fetchDataReserves();
+
+    const fetchDataGrossDomestic = async () => {
+      const res = await fetch(`${baseUrl}/${grossProductApi}/${selectedCountry}`);
+      const data = await res.json();
+      const filteredData = filterData(data || []);
+      setGrossData(filteredData);
+    };
+    fetchDataGrossDomestic();
   }, [selectedCountry]);
 
   const handleCountryChange = (event) => {
@@ -31,15 +41,25 @@ export default function App() {
 
 
   return (
-    <div className="App">Country Monitoring
-      <select value={selectedCountry} onChange={handleCountryChange}>
-        {countries.map((country) => (
-          <option key={country} value={country}>
-            {country}
-          </option>
-        ))}
-      </select>
-      <SimpleLine data={data} />
+    <div className="App">
+      <h1>Country Monitoring</h1>
+      <div><select value={selectedCountry} onChange={handleCountryChange}>
+          {countries.map((country) => (
+            <option key={country} value={country}>
+              {country}
+            </option>
+          ))}
+        </select>
+      </div>
+      <div>
+        Monetary resereves : 
+        <SimpleLine data={data} />
+      </div>
+      <div>
+        Gross domestic product    
+        <SimpleLineGross data={grossData} />
+      </div>
+      
     </div>
   );
 }
