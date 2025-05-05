@@ -10,9 +10,11 @@ export default function App() {
     .sort((a, b) => a.date - b.date);
   };
 
+  const baseUrl = process.env.API_URL || 'http://localhost:8080';
+
   useEffect(() => {
     const fetchDatas = async () => {
-      const res = await fetch("/api/api/wcm/v0/international-reserve/country/RUS");
+      const res = await fetch(`${baseUrl}/api/wcm/v0/international-reserve/country/RUS`);
       const data = await res.json();
       const filteredData = filterData(data || []);
       setdata(filteredData);
@@ -21,7 +23,7 @@ export default function App() {
   }, []);
 
   return (
-    <div className="App">How to use Recharts with React
+    <div className="App">Country Monitoring
       <BarColumn data={data} />
       <SimpleLine data={data} />
     </div>
