@@ -76,19 +76,16 @@ export default function App() {
       <div>
         {activeTab === 0 && (
           <div>
-            <h2>Monetary Reserves</h2>
             <SimpleLineMonetaryReserves data={data} />
           </div>
         )}
         {activeTab === 1 && (
           <div>
-            <h2>Gross Domestic Product</h2>
             <SimpleLineGross data={grossData} />
           </div>
         )}
         {activeTab === 2 && (
           <div>
-            <h2>Dept</h2>
             <SimpleLineDept data={deptData} />
           </div>
         )}
