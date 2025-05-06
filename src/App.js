@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
-import { SimpleLineMonetaryReserves, SimpleLineGross } from "./chart/SimpleLine";
+import { SimpleLineMonetaryReserves, SimpleLineGross, SimpleLineDept } from "./chart/SimpleLine";
 
 export default function App() {
   const [data, setdata] = useState();
   const [grossData, setGrossData] = useState();
-  const [countries, setCountries] = useState(["RUS", "USA", "FRA", "CHN", "IND"]);
+  const [deptData, setDeptData] = useState();
+  const [countries, setCountries] = useState(["RUS", "USA", "FRA", "DEU", "CHN", "IND", "AUS", "GBR"]);
   const [selectedCountry, setSelectedCountry] = useState("RUS");
 
   const filterData = (data) => {
@@ -15,6 +16,7 @@ export default function App() {
   const baseUrl = process.env.API_URL || 'http://localhost:8080';
   const reservesApi = 'api/wcm/v0/international-reserve/country';
   const grossProductApi = 'api/wcm/v0/gross-domestic-product/country';
+  const deptApi = 'api/wcm/v0/dept/country';
 
   useEffect(() => {
     const fetchDataReserves = async () => {
@@ -32,6 +34,15 @@ export default function App() {
       setGrossData(filteredData);
     };
     fetchDataGrossDomestic();
+
+    const fetchDataDept = async () => {
+      const res = await fetch(`${baseUrl}/${deptApi}/${selectedCountry}`);
+      const data = await res.json();
+      const filteredData = filterData(data || []);
+      setDeptData(filteredData);
+    };
+    fetchDataDept();
+
   }, [selectedCountry]);
 
   const handleCountryChange = (event) => {
@@ -58,7 +69,10 @@ export default function App() {
         Gross domestic product    
         <SimpleLineGross data={grossData} />
       </div>
-      
+      <div>
+        Dept    
+        <SimpleLineDept data={deptData} />
+      </div>
     </div>
   );
 }
