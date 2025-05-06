@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
-import SimpleLine from "./chart/SimpleLine";
-import SimpleLineGross from "./chart/SimpleLineGross";
+import { SimpleLineMonetaryReserves, SimpleLineGross } from "./chart/SimpleLine";
 
 export default function App() {
   const [data, setdata] = useState();
   const [grossData, setGrossData] = useState();
-  const [countries, setCountries] = useState(["RUS", "USA", "CHN", "IND"]);
+  const [countries, setCountries] = useState(["RUS", "USA", "FRA", "CHN", "IND"]);
   const [selectedCountry, setSelectedCountry] = useState("RUS");
 
   const filterData = (data) => {
@@ -52,8 +51,8 @@ export default function App() {
         </select>
       </div>
       <div>
-        Monetary resereves : 
-        <SimpleLine data={data} />
+        Monetary resereves
+        <SimpleLineMonetaryReserves data={data} />
       </div>
       <div>
         Gross domestic product    
