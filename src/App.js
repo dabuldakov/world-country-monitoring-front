@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { SimpleLineMonetaryReserves, SimpleLineGross, SimpleLineDept } from "./chart/SimpleLine";
-import { Tabs, Tab, Box } from "@mui/material";
+import { Tabs, Tab, Box, Select, MenuItem, FormControl, InputLabel } from "@mui/material";
 
 export default function App() {
   const [data, setdata] = useState();
@@ -58,14 +58,19 @@ export default function App() {
   return (
     <div className="App">
       <h2>Country Monitoring</h2>
-      <div><select value={selectedCountry} onChange={handleCountryChange}>
+      <FormControl sx={{ minWidth: 50, marginBottom: 2, minHeight: 20, marginLeft: 1, marginBottom: 1 }}>
+        <Select
+          labelId="country-select-label"
+          value={selectedCountry}
+          onChange={handleCountryChange}
+        >
           {countries.map((country) => (
-            <option key={country} value={country}>
+            <MenuItem key={country} value={country}>
               {country}
-            </option>
+            </MenuItem>
           ))}
-        </select>
-      </div>
+        </Select>
+      </FormControl>
       <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
         <Tabs value={activeTab} onChange={handleTabChange}>
           <Tab label="Monetary Reserves" />
