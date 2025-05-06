@@ -57,7 +57,7 @@ export default function App() {
 
   return (
     <div className="App">
-      <h1>Country Monitoring</h1>
+      <h2>Country Monitoring</h2>
       <div><select value={selectedCountry} onChange={handleCountryChange}>
           {countries.map((country) => (
             <option key={country} value={country}>
