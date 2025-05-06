@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { SimpleLineMonetaryReserves, SimpleLineGross, SimpleLineDept } from "./chart/SimpleLine";
+import { Tabs, Tab, Box } from "@mui/material";
 
 export default function App() {
   const [data, setdata] = useState();
@@ -7,6 +8,7 @@ export default function App() {
   const [deptData, setDeptData] = useState();
   const [countries, setCountries] = useState(["RUS", "USA", "FRA", "DEU", "CHN", "IND", "AUS", "GBR"]);
   const [selectedCountry, setSelectedCountry] = useState("RUS");
+  const [activeTab, setActiveTab] = useState(0);
 
   const filterData = (data) => {
     return data
@@ -49,6 +51,9 @@ export default function App() {
     setSelectedCountry(event.target.value);
   };
 
+  const handleTabChange = (event, newValue) => {
+    setActiveTab(newValue);
+  };
 
   return (
     <div className="App">
@@ -61,17 +66,32 @@ export default function App() {
           ))}
         </select>
       </div>
+      <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+        <Tabs value={activeTab} onChange={handleTabChange}>
+          <Tab label="Monetary Reserves" />
+          <Tab label="Gross Domestic Product" />
+          <Tab label="Dept" />
+        </Tabs>
+      </Box>
       <div>
-        Monetary resereves
-        <SimpleLineMonetaryReserves data={data} />
-      </div>
-      <div>
-        Gross domestic product    
-        <SimpleLineGross data={grossData} />
-      </div>
-      <div>
-        Dept    
-        <SimpleLineDept data={deptData} />
+        {activeTab === 0 && (
+          <div>
+            <h2>Monetary Reserves</h2>
+            <SimpleLineMonetaryReserves data={data} />
+          </div>
+        )}
+        {activeTab === 1 && (
+          <div>
+            <h2>Gross Domestic Product</h2>
+            <SimpleLineGross data={grossData} />
+          </div>
+        )}
+        {activeTab === 2 && (
+          <div>
+            <h2>Dept</h2>
+            <SimpleLineDept data={deptData} />
+          </div>
+        )}
       </div>
     </div>
   );
