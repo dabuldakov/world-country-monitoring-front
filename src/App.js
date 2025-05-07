@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
-import { SimpleLineMonetaryReserves, SimpleLineGross, SimpleLineDept } from "./chart/SimpleLine";
+import { SimpleLineMonetaryReserves, SimpleLineGross, SimpleLineDept, SimpleLineDeptGross } from "./chart/SimpleLine";
 import { Tabs, Tab, Box, Select, MenuItem, FormControl, InputLabel } from "@mui/material";
 
 export default function App() {
   const [data, setdata] = useState();
   const [grossData, setGrossData] = useState();
   const [deptData, setDeptData] = useState();
+  const [deptGrossData, setDeptGrossData] = useState();
   const [countries, setCountries] = useState(["RUS", "USA", "FRA", "DEU", "CHN", "IND", "AUS", "GBR"]);
   const [selectedCountry, setSelectedCountry] = useState("RUS");
   const [activeTab, setActiveTab] = useState(0);
@@ -19,6 +20,7 @@ export default function App() {
   const reservesApi = 'api/wcm/v0/international-reserve/country';
   const grossProductApi = 'api/wcm/v0/gross-domestic-product/country';
   const deptApi = 'api/wcm/v0/dept/country';
+  const deptGrossApi ='api/wcm/v0/dept/dept-gross/country'
 
   useEffect(() => {
     const fetchDataReserves = async () => {
@@ -44,6 +46,14 @@ export default function App() {
       setDeptData(filteredData);
     };
     fetchDataDept();
+
+    const fetchDataDeptGross = async () => {
+      const res = await fetch(`${baseUrl}/${deptGrossApi}/${selectedCountry}`);
+      const data = await res.json();
+      const filteredData = filterData(data || []);
+      setDeptGrossData(filteredData);
+    };
+    fetchDataDeptGross();
 
   }, [selectedCountry]);
 
@@ -76,6 +86,7 @@ export default function App() {
           <Tab label="Monetary Reserves" />
           <Tab label="Gross Domestic Product" />
           <Tab label="Dept" />
+          <Tab label="Dept / Gross" />
         </Tabs>
       </Box>
       <div>
@@ -92,6 +103,11 @@ export default function App() {
         {activeTab === 2 && (
           <div>
             <SimpleLineDept data={deptData} />
+          </div>
+        )}
+        {activeTab === 3 && (
+          <div>
+            <SimpleLineDeptGross data={deptGrossData} />
           </div>
         )}
       </div>
