@@ -57,6 +57,7 @@ import {
         <Legend />
         <Line type="monotone" dataKey="absolut" stroke="#8884d8" activeDot={{ r: 8 }}  strokeWidth={2} />
         <Line type="monotone" dataKey="purchasingPowerParities" label = "foreign exchange" stroke="#82ca9d"  strokeWidth={2} />
+        <Line type="monotone" dataKey="current" label = "current" stroke="#C71585"  strokeWidth={2} />
       </LineChart>
       </ResponsiveContainer>
     );
