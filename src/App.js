@@ -17,7 +17,7 @@ export default function App() {
   };
 
   const baseUrl = process.env.REACT_APP_API_URL || '/api';
-  console.log(baseUrl);
+  console.log(process.env.REACT_APP_API_URL);
   const reservesApi = 'api/wcm/v0/international-reserve/country';
   const grossProductApi = 'api/wcm/v0/gross-domestic-product/country';
   const deptApi = 'api/wcm/v0/dept/country';
