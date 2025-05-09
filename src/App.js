@@ -16,7 +16,7 @@ export default function App() {
     .sort((a, b) => a.date - b.date);
   };
 
-  const baseUrl = process.env.REACT_APP_API_URL || 'http://localhost:8080';
+  const baseUrl = process.env.REACT_APP_API_URL || '/api';
   const reservesApi = 'api/wcm/v0/international-reserve/country';
   const grossProductApi = 'api/wcm/v0/gross-domestic-product/country';
   const deptApi = 'api/wcm/v0/dept/country';
