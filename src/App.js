@@ -20,8 +20,8 @@ export default function App() {
   console.log(process.env.REACT_APP_API_URL);
   const reservesApi = 'api/wcm/v0/international-reserve/country';
   const grossProductApi = 'api/wcm/v0/gross-domestic-product/country';
-  const deptApi = 'api/wcm/v0/dept/country';
-  const deptGrossApi ='api/wcm/v0/dept/dept-gross/country'
+  const deptApi = 'api/wcm/v0/debt/country';
+  const deptGrossApi ='api/wcm/v0/debt/debt-gross/country'
 
   useEffect(() => {
     const fetchDataReserves = async () => {
