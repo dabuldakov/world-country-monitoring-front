@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { SimpleLineMonetaryReserves, SimpleLineGross, SimpleLineDept, SimpleLineDeptGross } from "./chart/SimpleLine";
+import { BarColumnDebtGrossPercentage } from "./chart/BarColumn"
 import { Tabs, Tab, Box, Select, MenuItem, FormControl, InputLabel } from "@mui/material";
 
 export default function App() {
@@ -7,6 +8,7 @@ export default function App() {
   const [grossData, setGrossData] = useState();
   const [deptData, setDeptData] = useState();
   const [deptGrossData, setDeptGrossData] = useState();
+  const [debtGrossPercentageData, setDebtGrossPercentageData] = useState();
   const [countries, setCountries] = useState(["RUS", "USA", "FRA", "DEU", "CHN", "IND", "AUS", "GBR"]);
   const [selectedCountry, setSelectedCountry] = useState("RUS");
   const [activeTab, setActiveTab] = useState(0);
@@ -22,6 +24,7 @@ export default function App() {
   const grossProductApi = 'api/wcm/v0/gross-domestic-product/country';
   const deptApi = 'api/wcm/v0/debt/country';
   const deptGrossApi ='api/wcm/v0/debt/debt-gross/country'
+  const debtGrossPercentageApi ='api/wcm/v0/debt/year'
 
   useEffect(() => {
     const fetchDataReserves = async () => {
@@ -56,6 +59,13 @@ export default function App() {
     };
     fetchDataDeptGross();
 
+    const fetchDataDebtGrossPercentage = async () => {
+      const res = await fetch(`${baseUrl}/${debtGrossPercentageApi}/${'2022'}`);
+      const data = await res.json();
+      setDebtGrossPercentageData(data || []);
+    };
+    fetchDataDebtGrossPercentage();
+
   }, [selectedCountry]);
 
   const handleCountryChange = (event) => {
@@ -86,8 +96,8 @@ export default function App() {
         <Tabs value={activeTab} onChange={handleTabChange}>
           <Tab label="Monetary Reserves" />
           <Tab label="Gross Domestic Product" />
-          <Tab label="Dept" />
-          <Tab label="Dept / Gross" />
+          <Tab label="Debt" />
+          <Tab label="Debt / Gross" />
         </Tabs>
       </Box>
       <div>
@@ -109,6 +119,8 @@ export default function App() {
         {activeTab === 3 && (
           <div>
             <SimpleLineDeptGross data={deptGrossData} />
+            <div>All countries for 2022 year</div>
+            <BarColumnDebtGrossPercentage data={debtGrossPercentageData} />
           </div>
         )}
       </div>

@@ -9,7 +9,7 @@ import {
     ResponsiveContainer,
   } from "recharts";
   
-  export default function BarColumn({ data }) {
+  export function BarColumnDebtGrossPercentage({ data }) {
     return (
       <ResponsiveContainer width="100%" height={400}>
         <BarChart
@@ -22,12 +22,11 @@ import {
           }}
         >
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="date" />
+          <XAxis dataKey="countryCode" />
           <YAxis />
           <Tooltip />
           <Legend />
-          <Bar dataKey="date" fill="#8884d8" />
-          <Bar dataKey="amount" fill="#82ca9d" />
+          <Bar dataKey="percentageToGDP" fill="#8884d8"/>
         </BarChart>
       </ResponsiveContainer>
     );
