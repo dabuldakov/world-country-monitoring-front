@@ -14,7 +14,7 @@ export function GetMainTabs({ selectedCountry }) {
       const [debtGrossPercentageData, setDebtGrossPercentageData] = useState();
       const [activeTab, setActiveTab] = useState(0);
     
-      const baseUrl = process.env.REACT_APP_API_URL || '/api';
+      const baseUrl = process.env.REACT_APP_API_URL || 'http://localhost:8080';
       console.log(process.env.REACT_APP_API_URL);
       const reservesApi = 'api/wcm/v0/international-reserve/country';
       const grossProductApi = 'api/wcm/v0/gross-domestic-product/country';
