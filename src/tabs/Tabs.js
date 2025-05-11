@@ -1,27 +1,24 @@
 import { useEffect, useState } from "react";
 import { SimpleLineMonetaryReserves, SimpleLineGross, SimpleLineDept, SimpleLineDeptGross } from "../chart/SimpleLine";
-import { BarColumnDebtGrossPercentage } from "../chart/BarColumn"
+import { BarColumnDebtGrossAllCountries, BarColumnGrossDataAllCountries } from "../chart/BarColumn"
 
 import { Tabs, Tab, Box } from "@mui/material";
 
 export function GetMainTabs({ selectedCountry }) {
 
-      const [data, setdata] = useState();
+      const [reserveData, setReserveData] = useState();
       const [grossData, setGrossData] = useState();
+      const [grossDataAllCountries, setGrossDataAllCountries] = useState();
       const [deptData, setDeptData] = useState();
       const [deptGrossData, setDeptGrossData] = useState();
       const [debtGrossPercentageData, setDebtGrossPercentageData] = useState();
       const [activeTab, setActiveTab] = useState(0);
-
-      const filterData = (data) => {
-        return data
-        .sort((a, b) => a.date - b.date);
-      };
     
       const baseUrl = process.env.REACT_APP_API_URL || '/api';
       console.log(process.env.REACT_APP_API_URL);
       const reservesApi = 'api/wcm/v0/international-reserve/country';
       const grossProductApi = 'api/wcm/v0/gross-domestic-product/country';
+      const grossProductAllCountriesApi = 'api/wcm/v0/gross-domestic-product/year';
       const deptApi = 'api/wcm/v0/debt/country';
       const deptGrossApi ='api/wcm/v0/debt/debt-gross/country'
       const debtGrossPercentageApi ='api/wcm/v0/debt/year'
@@ -30,32 +27,35 @@ export function GetMainTabs({ selectedCountry }) {
           const fetchDataReserves = async () => {
             const res = await fetch(`${baseUrl}/${reservesApi}/${selectedCountry}`);
             const data = await res.json();
-            const filteredData = filterData(data || []);
-            setdata(filteredData);
+            setReserveData(data || []);
           };
           fetchDataReserves();
       
           const fetchDataGrossDomestic = async () => {
             const res = await fetch(`${baseUrl}/${grossProductApi}/${selectedCountry}`);
             const data = await res.json();
-            const filteredData = filterData(data || []);
-            setGrossData(filteredData);
+            setGrossData(data || []);
           };
           fetchDataGrossDomestic();
+
+          const fetchDataGrossDomesticAllCountries = async () => {
+            const res = await fetch(`${baseUrl}/${grossProductAllCountriesApi}/${'2023'}`);
+            const data = await res.json();
+            setGrossDataAllCountries(data || []);
+          };
+          fetchDataGrossDomesticAllCountries();
       
           const fetchDataDept = async () => {
             const res = await fetch(`${baseUrl}/${deptApi}/${selectedCountry}`);
             const data = await res.json();
-            const filteredData = filterData(data || []);
-            setDeptData(filteredData);
+            setDeptData(data || []);
           };
           fetchDataDept();
       
           const fetchDataDeptGross = async () => {
             const res = await fetch(`${baseUrl}/${deptGrossApi}/${selectedCountry}`);
             const data = await res.json();
-            const filteredData = filterData(data || []);
-            setDeptGrossData(filteredData);
+            setDeptGrossData(data || []);
           };
           fetchDataDeptGross();
       
@@ -92,12 +92,14 @@ export function GetMainTabs({ selectedCountry }) {
       <div>
         {activeTab === 0 && (
           <div>
-            <SimpleLineMonetaryReserves data={data} />
+            <SimpleLineMonetaryReserves data={reserveData} />
           </div>
         )}
         {activeTab === 1 && (
           <div>
             <SimpleLineGross data={grossData} />
+            <div>All countries for 2023 year</div>
+            <BarColumnGrossDataAllCountries data={grossDataAllCountries} />
           </div>
         )}
         {activeTab === 2 && (
@@ -109,7 +111,7 @@ export function GetMainTabs({ selectedCountry }) {
           <div>
             <SimpleLineDeptGross data={deptGrossData} />
             <div>All countries for 2022 year</div>
-            <BarColumnDebtGrossPercentage data={debtGrossPercentageData} />
+            <BarColumnDebtGrossAllCountries data={debtGrossPercentageData} />
           </div>
         )}
       </div>
