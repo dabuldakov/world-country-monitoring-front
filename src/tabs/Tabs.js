@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { SimpleLineMonetaryReserves, SimpleLineGross, SimpleLineDept, SimpleLineDeptGross } from "../chart/SimpleLine";
-import { BarColumnDebtGrossAllCountries, BarColumnGrossDataAllCountries } from "../chart/BarColumn"
+import { BarColumnDebtGrossAllCountries, BarColumnGrossDataAllCountries, BarColumnReservesAllCountries } from "../chart/BarColumn"
 
 import { Tabs, Tab, Box } from "@mui/material";
 
 export function GetMainTabs({ selectedCountry }) {
 
       const [reserveData, setReserveData] = useState();
+      const [reserveAllCOuntriesData, setReserveAllCountriesData] = useState();
       const [grossData, setGrossData] = useState();
       const [grossDataAllCountries, setGrossDataAllCountries] = useState();
       const [deptData, setDeptData] = useState();
@@ -14,9 +15,10 @@ export function GetMainTabs({ selectedCountry }) {
       const [debtGrossPercentageData, setDebtGrossPercentageData] = useState();
       const [activeTab, setActiveTab] = useState(0);
     
-      const baseUrl = process.env.REACT_APP_API_URL || '/api';
+      const baseUrl = process.env.REACT_APP_API_URL || 'http://176.209.237.111:8097/api';
       console.log(process.env.REACT_APP_API_URL);
       const reservesApi = 'api/wcm/v0/international-reserve/country';
+      const reservesAllCountriesApi = 'api/wcm/v0/international-reserve/year';
       const grossProductApi = 'api/wcm/v0/gross-domestic-product/country';
       const grossProductAllCountriesApi = 'api/wcm/v0/gross-domestic-product/year';
       const deptApi = 'api/wcm/v0/debt/country';
@@ -44,6 +46,13 @@ export function GetMainTabs({ selectedCountry }) {
             setGrossDataAllCountries(data || []);
           };
           fetchDataGrossDomesticAllCountries();
+
+          const fetchDataReservesAllCountries = async () => {
+            const res = await fetch(`${baseUrl}/${reservesAllCountriesApi}/${'2023'}`);
+            const data = await res.json();
+            setReserveAllCountriesData(data || []);
+          };
+          fetchDataReservesAllCountries();
       
           const fetchDataDept = async () => {
             const res = await fetch(`${baseUrl}/${deptApi}/${selectedCountry}`);
@@ -93,6 +102,8 @@ export function GetMainTabs({ selectedCountry }) {
         {activeTab === 0 && (
           <div>
             <SimpleLineMonetaryReserves data={reserveData} />
+            <div>All countries for 2023 year</div>
+            <BarColumnReservesAllCountries data={reserveAllCOuntriesData} />
           </div>
         )}
         {activeTab === 1 && (
