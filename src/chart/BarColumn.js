@@ -9,6 +9,8 @@ import {
     ResponsiveContainer,
   } from "recharts";
   
+  const NORMILIZE_NUMBER = 1000000;
+
   export function BarColumnDebtGrossAllCountries({ data }) {
     return (
       <ResponsiveContainer width="100%" height={400}>
@@ -36,7 +38,7 @@ export function BarColumnGrossDataAllCountries({ data }) {
   return (
     <ResponsiveContainer width="100%" height={400}>
       <BarChart
-        data={data}
+        data={normalizeBarColumnGrossDataAllCountries(data)}
         margin={{
           top: 5,
           right: 30,
@@ -59,7 +61,7 @@ export function BarColumnReservesAllCountries({ data }) {
   return (
     <ResponsiveContainer width="100%" height={400}>
       <BarChart
-        data={data}
+        data={normalizeBarColumnReservesAllCountries(data)}
         margin={{
           top: 5,
           right: 30,
@@ -76,4 +78,30 @@ export function BarColumnReservesAllCountries({ data }) {
       </BarChart>
     </ResponsiveContainer>
   );
+}
+
+function normalizeBarColumnReservesAllCountries(data) {
+  if (!Array.isArray(data)) {
+    console.error("Invalid data passed to normalizeBarColumnReservesAllCountries:", data);
+    return [];
+  }
+  return data.map(item => ({
+    ...item,
+    amount: normalizeNumber(item.amount),
+  }));
+}
+
+function normalizeBarColumnGrossDataAllCountries(data) {
+  if (!Array.isArray(data)) {
+    console.error("Invalid data passed to normalizeBarColumnGrossDataAllCountries:", data);
+    return [];
+  }
+  return data.map(item => ({
+    ...item,
+    current: normalizeNumber(item.current),
+  }));
+}
+
+const normalizeNumber = ( number ) => {
+  return number !== undefined ? number / NORMILIZE_NUMBER : undefined
 }

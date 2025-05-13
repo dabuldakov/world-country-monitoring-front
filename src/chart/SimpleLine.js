@@ -9,13 +9,15 @@ import {
     ResponsiveContainer,
   } from "recharts";
 
+    const NORMILIZE_NUMBER = 1000000;
+
     export function SimpleLineMonetaryReserves({ data }) {
         return (
           <ResponsiveContainer width="100%" height={400}>
           <LineChart
             width={500}
             height={300}
-            data={data}
+            data={normalizeSimpleLineMonetaryReserves(data)}
             margin={{
               top: 5,
               right: 30,
@@ -42,7 +44,7 @@ import {
       <LineChart
         width={500}
         height={300}
-        data={data}
+        data={normalizeSimpleLineGross(data)}
         margin={{
           top: 5,
           right: 30,
@@ -69,7 +71,7 @@ import {
       <LineChart
         width={500}
         height={300}
-        data={data}
+        data={normalizeSimpleLineDept(data)}
         margin={{
           top: 5,
           right: 30,
@@ -111,4 +113,45 @@ import {
       </LineChart>
       </ResponsiveContainer>
     );
+  }
+
+  function normalizeSimpleLineMonetaryReserves(data) {
+    if (!Array.isArray(data)) {
+      console.error("Invalid data passed to normalizeSimpleLineMonetaryReserves:", data);
+      return [];
+    }
+    return data.map(item => ({
+      ...item,
+      amount: normalizeNumber(item.amount),
+      foreignExchange: normalizeNumber(item.foreignExchange),
+      monetaryGold: normalizeNumber(item.monetaryGold),
+    }));
+  }
+
+  function normalizeSimpleLineGross(data) {
+    if (!Array.isArray(data)) {
+      console.error("Invalid data passed to normalizeSimpleLineGross:", data);
+      return [];
+    }
+    return data.map(item => ({
+      ...item,
+      absolut: normalizeNumber(item.absolut),
+      purchasingPowerParities: normalizeNumber(item.purchasingPowerParities),
+      current: normalizeNumber(item.current),
+    }));
+  }
+
+  function normalizeSimpleLineDept(data) {
+    if (!Array.isArray(data)) {
+      console.error("Invalid data passed to normalizeSimpleLineDept:", data);
+      return [];
+    }
+    return data.map(item => ({
+      ...item,
+      foreign: normalizeNumber(item.foreign),
+    }));
+  }
+
+  const normalizeNumber = ( number ) => {
+    return number !== undefined ? number / NORMILIZE_NUMBER : undefined
   }
