@@ -1,0 +1,51 @@
+const baseUrl = process.env.REACT_APP_API_URL || 'http://176.209.237.111:8097/api';
+console.log(process.env.REACT_APP_API_URL);
+const reservesApi = 'api/wcm/v0/international-reserve/country';
+const reservesAllCountriesApi = 'api/wcm/v0/international-reserve/year';
+const grossProductApi = 'api/wcm/v0/gross-domestic-product/country';
+const grossProductAllCountriesApi = 'api/wcm/v0/gross-domestic-product/year';
+const deptApi = 'api/wcm/v0/debt/country';
+const deptGrossApi ='api/wcm/v0/debt/debt-gross/country'
+const debtGrossPercentageApi ='api/wcm/v0/debt/year'
+
+export const fetchDataReserves = async ({ selectedCountry }) => {
+  return fetchData(`${baseUrl}/${reservesApi}/${selectedCountry}`);
+};
+
+export const fetchDataGrossDomestic = async ({ selectedCountry }) => {
+  return fetchData(`${baseUrl}/${grossProductApi}/${selectedCountry}`);
+};
+
+export const fetchDataGrossDomesticAllCountries = async () => {
+  return fetchData(`${baseUrl}/${grossProductAllCountriesApi}/${'2023'}`);
+};
+
+export const fetchDataReservesAllCountries = async () => {
+  return fetchData(`${baseUrl}/${reservesAllCountriesApi}/${'2023'}`);
+};
+
+export const fetchDataDept = async ({ selectedCountry }) => {
+  return fetchData(`${baseUrl}/${deptApi}/${selectedCountry}`);
+};
+
+export const fetchDataDeptGross = async ({ selectedCountry }) => {
+  return fetchData(`${baseUrl}/${deptGrossApi}/${selectedCountry}`);
+};
+
+export const fetchDataDebtGrossPercentageAllCountries = async () => {
+  return fetchData(`${baseUrl}/${debtGrossPercentageApi}/${'2022'}`);
+};
+
+const fetchData = async (url) => {
+  try {
+    const res = await fetch(url);
+    if (!res.ok) {
+      throw new Error(`Error fetching data: ${res.statusText}`);
+    }
+    const data = await res.json();
+    return data || [];
+  } catch (error) {
+    console.error("Error in fetchData:", error);
+    return [];
+  }
+};

@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
 import { SimpleLineMonetaryReserves, SimpleLineGross, SimpleLineDept, SimpleLineDeptGross } from "../chart/SimpleLine";
 import { BarColumnDebtGrossAllCountries, BarColumnGrossDataAllCountries, BarColumnReservesAllCountries } from "../chart/BarColumn"
+import { fetchDataReserves, fetchDataGrossDomestic, fetchDataGrossDomesticAllCountries, fetchDataReservesAllCountries,
+    fetchDataDept, fetchDataDeptGross, fetchDataDebtGrossPercentageAllCountries
+ } from "../rest/RestService"
 
 import { Tabs, Tab, Box } from "@mui/material";
 
@@ -14,67 +17,36 @@ export function GetMainTabs({ selectedCountry }) {
       const [deptGrossData, setDeptGrossData] = useState();
       const [debtGrossPercentageData, setDebtGrossPercentageData] = useState();
       const [activeTab, setActiveTab] = useState(0);
-    
-      const baseUrl = process.env.REACT_APP_API_URL || 'http://176.209.237.111:8097/api';
-      console.log(process.env.REACT_APP_API_URL);
-      const reservesApi = 'api/wcm/v0/international-reserve/country';
-      const reservesAllCountriesApi = 'api/wcm/v0/international-reserve/year';
-      const grossProductApi = 'api/wcm/v0/gross-domestic-product/country';
-      const grossProductAllCountriesApi = 'api/wcm/v0/gross-domestic-product/year';
-      const deptApi = 'api/wcm/v0/debt/country';
-      const deptGrossApi ='api/wcm/v0/debt/debt-gross/country'
-      const debtGrossPercentageApi ='api/wcm/v0/debt/year'
 
       useEffect(() => {
-          const fetchDataReserves = async () => {
-            const res = await fetch(`${baseUrl}/${reservesApi}/${selectedCountry}`);
-            const data = await res.json();
-            setReserveData(data || []);
-          };
-          fetchDataReserves();
-      
-          const fetchDataGrossDomestic = async () => {
-            const res = await fetch(`${baseUrl}/${grossProductApi}/${selectedCountry}`);
-            const data = await res.json();
-            setGrossData(data || []);
-          };
-          fetchDataGrossDomestic();
+        const fetchData = async () => {
+            try {
+              const reserves = await fetchDataReserves({ selectedCountry });
+              setReserveData(reserves);
+        
+              const gross = await fetchDataGrossDomestic({ selectedCountry });
+              setGrossData(gross);
+        
+              const grossAllCountries = await fetchDataGrossDomesticAllCountries();
+              setGrossDataAllCountries(grossAllCountries);
+        
+              const reservesAllCountries = await fetchDataReservesAllCountries();
+              setReserveAllCountriesData(reservesAllCountries);
+        
+              const dept = await fetchDataDept({ selectedCountry });
+              setDeptData(dept);
+        
+              const deptGross = await fetchDataDeptGross({ selectedCountry });
+              setDeptGrossData(deptGross);
+        
+              const debtGrossPercentage = await fetchDataDebtGrossPercentageAllCountries();
+              setDebtGrossPercentageData(debtGrossPercentage);
+            } catch (error) {
+              console.error("Error fetching data:", error);
+            }
+        };
 
-          const fetchDataGrossDomesticAllCountries = async () => {
-            const res = await fetch(`${baseUrl}/${grossProductAllCountriesApi}/${'2023'}`);
-            const data = await res.json();
-            setGrossDataAllCountries(data || []);
-          };
-          fetchDataGrossDomesticAllCountries();
-
-          const fetchDataReservesAllCountries = async () => {
-            const res = await fetch(`${baseUrl}/${reservesAllCountriesApi}/${'2023'}`);
-            const data = await res.json();
-            setReserveAllCountriesData(data || []);
-          };
-          fetchDataReservesAllCountries();
-      
-          const fetchDataDept = async () => {
-            const res = await fetch(`${baseUrl}/${deptApi}/${selectedCountry}`);
-            const data = await res.json();
-            setDeptData(data || []);
-          };
-          fetchDataDept();
-      
-          const fetchDataDeptGross = async () => {
-            const res = await fetch(`${baseUrl}/${deptGrossApi}/${selectedCountry}`);
-            const data = await res.json();
-            setDeptGrossData(data || []);
-          };
-          fetchDataDeptGross();
-      
-          const fetchDataDebtGrossPercentage = async () => {
-            const res = await fetch(`${baseUrl}/${debtGrossPercentageApi}/${'2022'}`);
-            const data = await res.json();
-            setDebtGrossPercentageData(data || []);
-          };
-          fetchDataDebtGrossPercentage();
-      
+        fetchData()
         }, [selectedCountry]);
 
       const handleTabChange = (event, newValue) => {
