@@ -13,8 +13,8 @@ export function GetMainTabs({ selectedCountry }) {
       const [reserveAllCOuntriesData, setReserveAllCountriesData] = useState();
       const [grossData, setGrossData] = useState();
       const [grossDataAllCountries, setGrossDataAllCountries] = useState();
-      const [deptData, setDeptData] = useState();
-      const [deptGrossData, setDeptGrossData] = useState();
+      const [deptData, setDebtData] = useState();
+      const [deptGrossData, setDebtGrossData] = useState();
       const [debtGrossPercentageData, setDebtGrossPercentageData] = useState();
       const [activeTab, setActiveTab] = useState(0);
 
@@ -34,10 +34,10 @@ export function GetMainTabs({ selectedCountry }) {
               setReserveAllCountriesData(reservesAllCountries);
         
               const dept = await fetchDataDept({ selectedCountry });
-              setDeptData(dept);
+              setDebtData(dept);
         
               const deptGross = await fetchDataDeptGross({ selectedCountry });
-              setDeptGrossData(deptGross);
+              setDebtGrossData(deptGross);
         
               const debtGrossPercentage = await fetchDataDebtGrossPercentageAllCountries();
               setDebtGrossPercentageData(debtGrossPercentage);
