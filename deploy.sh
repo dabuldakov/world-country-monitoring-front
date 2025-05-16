@@ -18,6 +18,8 @@ echo "🔧 Updating REPO_URL_V_${CURRENT_VERSION} to REPO_URL_V_${NEXT_VERSION} 
 sed -i "s/REPO_URL_V_${CURRENT_VERSION}/REPO_URL_V_${NEXT_VERSION}/g" "$DOCKERFILE_PATH"
 
 echo "🔄 Pushing latest changes..."
+git add DOCKERFILE_PATH
+git commit -m "Deployed new frontend version $NEXT_VERSION"
 git push || { echo "❌ Git push failed"; exit 1; }
 
 echo "🔨 Building containers..."
