@@ -13,8 +13,8 @@ export function GetMainTabs({ selectedCountry }) {
       const [reserveAllCOuntriesData, setReserveAllCountriesData] = useState();
       const [grossData, setGrossData] = useState();
       const [grossDataAllCountries, setGrossDataAllCountries] = useState();
-      const [deptData, setDebtData] = useState();
-      const [deptGrossData, setDebtGrossData] = useState();
+      const [debtData, setDebtData] = useState();
+      const [debtGrossData, setDebtGrossData] = useState();
       const [debtGrossPercentageData, setDebtGrossPercentageData] = useState();
       const [activeTab, setActiveTab] = useState(0);
 
@@ -87,12 +87,12 @@ export function GetMainTabs({ selectedCountry }) {
         )}
         {activeTab === 2 && (
           <div>
-            <SimpleLineDept data={deptData} />
+            <SimpleLineDept data={debtData} />
           </div>
         )}
         {activeTab === 3 && (
           <div>
-            <SimpleLineDeptGross data={deptGrossData} />
+            <SimpleLineDeptGross data={debtGrossData} />
             <div>All countries for 2022 year</div>
             <BarColumnDebtGrossAllCountries data={debtGrossPercentageData} />
           </div>
