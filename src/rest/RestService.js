@@ -1,5 +1,4 @@
-const baseUrl = process.env.REACT_APP_API_URL || 'http://176.209.237.111:8097/api';
-console.log(baseUrl);
+const baseUrl = process.env.REACT_APP_API_URL || 'http://localhost:8080';
 const reservesApi = 'api/wcm/v0/international-reserve/country';
 const reservesAllCountriesApi = 'api/wcm/v0/international-reserve/year';
 const grossProductApi = 'api/wcm/v0/gross-domestic-product/country';
