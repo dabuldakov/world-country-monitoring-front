@@ -1,11 +1,11 @@
-import { useEffect, useState } from "react";
-import { SimpleLineMonetaryReserves, SimpleLineGross, SimpleLineDept, SimpleLineDeptGross } from "../chart/SimpleLine";
-import { BarColumnDebtGrossAllCountries, BarColumnGrossDataAllCountries, BarColumnReservesAllCountries } from "../chart/BarColumn"
+import { useEffect, useState } from 'react';
+import { SimpleLineMonetaryReserves, SimpleLineGross, SimpleLineDept, SimpleLineDeptGross } from '../chart/SimpleLine';
+import { BarColumnDebtGrossAllCountries, BarColumnGrossDataAllCountries, BarColumnReservesAllCountries } from '../chart/BarColumn';
 import { fetchDataReserves, fetchDataGrossDomestic, fetchDataGrossDomesticAllCountries, fetchDataReservesAllCountries,
     fetchDataDept, fetchDataDeptGross, fetchDataDebtGrossPercentageAllCountries
- } from "../rest/RestService"
+ } from '../rest/RestService';
 
-import { Tabs, Tab, Box } from "@mui/material";
+import { Tabs, Tab, Box } from '@mui/material';
 
 export function GetMainTabs({ selectedCountry }) {
 
@@ -42,11 +42,11 @@ export function GetMainTabs({ selectedCountry }) {
               const debtGrossPercentage = await fetchDataDebtGrossPercentageAllCountries();
               setDebtGrossPercentageData(debtGrossPercentage);
             } catch (error) {
-              console.error("Error fetching data:", error);
+              console.error('Error fetching data:', error);
             }
         };
 
-        fetchData()
+        fetchData();
         }, [selectedCountry]);
 
       const handleTabChange = (event, newValue) => {
@@ -56,7 +56,7 @@ export function GetMainTabs({ selectedCountry }) {
       
     return (
     <div>
-      <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+      <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
         <Tabs 
           value={activeTab} 
           onChange={handleTabChange}
@@ -99,5 +99,5 @@ export function GetMainTabs({ selectedCountry }) {
         )}
       </div>
     </div>
-    )
+    );
 }

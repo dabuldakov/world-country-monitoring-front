@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 
-import { Tabs, Tab, Box } from "@mui/material";
-import { PopulationSimpleLine } from "../chart/Population";
-import { fetchDataPopulation } from "../rest/RestService"
+import { Tabs, Tab, Box } from '@mui/material';
+import { PopulationSimpleLine } from '../chart/Population';
+import { fetchDataPopulation } from '../rest/RestService';
 
 export function GetSocialTab({ selectedCountry }) {
 
@@ -15,11 +15,11 @@ export function GetSocialTab({ selectedCountry }) {
             const population = await fetchDataPopulation({ selectedCountry });
             setPopulationData(population);
           } catch (error) {
-            console.error("Error fetching data:", error);
+            console.error('Error fetching data:', error);
           }
         };
 
-        fetchData()
+        fetchData();
         }, [selectedCountry]);
 
     const handleTabChange = (event, newValue) => {
@@ -28,7 +28,7 @@ export function GetSocialTab({ selectedCountry }) {
 
   return (
     <div>
-      <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+      <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
         <Tabs 
           value={activeTab} 
           onChange={handleTabChange}

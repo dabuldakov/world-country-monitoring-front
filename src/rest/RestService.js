@@ -1,13 +1,13 @@
-const baseUrl = process.env.REACT_APP_API_URL || 'http://localhost:8080';
+const baseUrl = process.env.REACT_APP_API_URL || 'http://176.209.237.111:8097/api';
 console.log(process.env.REACT_APP_API_URL);
 const reservesApi = 'api/wcm/v0/international-reserve/country';
 const reservesAllCountriesApi = 'api/wcm/v0/international-reserve/year';
 const grossProductApi = 'api/wcm/v0/gross-domestic-product/country';
 const grossProductAllCountriesApi = 'api/wcm/v0/gross-domestic-product/year';
 const debtApi = 'api/wcm/v0/debt/country';
-const debtGrossApi ='api/wcm/v0/debt/debt-gross/country'
-const debtGrossPercentageApi ='api/wcm/v0/debt/year'
-const populationApi = 'api/wcm/v0/population/country'
+const debtGrossApi ='api/wcm/v0/debt/debt-gross/country';
+const debtGrossPercentageApi ='api/wcm/v0/debt/year';
+const populationApi = 'api/wcm/v0/population/country';
 
 export const fetchDataReserves = async ({ selectedCountry }) => {
   return fetchData(`${baseUrl}/${reservesApi}/${selectedCountry}`);
@@ -50,7 +50,7 @@ const fetchData = async (url) => {
     const data = await res.json();
     return data || [];
   } catch (error) {
-    console.error("Error in fetchData:", error);
+    console.error('Error in fetchData:', error);
     return [];
   }
 };

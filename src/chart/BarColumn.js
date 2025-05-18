@@ -7,7 +7,7 @@ import {
     Tooltip,
     Legend,
     ResponsiveContainer,
-  } from "recharts";
+  } from 'recharts';
   
   const NORMILIZE_NUMBER = 1000000;
 
@@ -82,7 +82,7 @@ export function BarColumnReservesAllCountries({ data }) {
 
 function normalizeBarColumnReservesAllCountries(data) {
   if (!Array.isArray(data)) {
-    console.error("Invalid data passed to normalizeBarColumnReservesAllCountries:", data);
+    console.error('Invalid data passed to normalizeBarColumnReservesAllCountries:', data);
     return [];
   }
   return data.map(item => ({
@@ -93,7 +93,7 @@ function normalizeBarColumnReservesAllCountries(data) {
 
 function normalizeBarColumnGrossDataAllCountries(data) {
   if (!Array.isArray(data)) {
-    console.error("Invalid data passed to normalizeBarColumnGrossDataAllCountries:", data);
+    console.error('Invalid data passed to normalizeBarColumnGrossDataAllCountries:', data);
     return [];
   }
   return data.map(item => ({
@@ -103,5 +103,5 @@ function normalizeBarColumnGrossDataAllCountries(data) {
 }
 
 const normalizeNumber = ( number ) => {
-  return number !== undefined ? number / NORMILIZE_NUMBER : undefined
-}
+  return number !== undefined ? number / NORMILIZE_NUMBER : undefined;
+};

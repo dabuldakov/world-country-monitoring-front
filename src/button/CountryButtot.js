@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useState } from 'react';
 
-import { Select, MenuItem, FormControl } from "@mui/material";
+import { Select, MenuItem, FormControl } from '@mui/material';
 
 export function CountryButton({ selectedCountry, setSelectedCountry }) {
 
-    const [countries, setCountries] = useState(["RUS", "USA", "FRA", "DEU", "CHN", "IND", "AUS", "GBR"]);
+    const [countries, setCountries] = useState(['RUS', 'USA', 'FRA', 'DEU', 'CHN', 'IND', 'AUS', 'GBR']);
     
     const handleCountryChange = (event) => {
         setSelectedCountry(event.target.value);
@@ -26,5 +26,5 @@ export function CountryButton({ selectedCountry, setSelectedCountry }) {
         </Select>
         </FormControl>
       </div>
-    )
+    );
 }

@@ -7,7 +7,7 @@ import {
     Tooltip,
     Legend,
     ResponsiveContainer,
-  } from "recharts";
+  } from 'recharts';
 
     const NORMILIZE_NUMBER = 1000000;
 
@@ -117,7 +117,7 @@ import {
 
   function normalizeSimpleLineMonetaryReserves(data) {
     if (!Array.isArray(data)) {
-      console.error("Invalid data passed to normalizeSimpleLineMonetaryReserves:", data);
+      console.error('Invalid data passed to normalizeSimpleLineMonetaryReserves:', data);
       return [];
     }
     return data.map(item => ({
@@ -130,7 +130,7 @@ import {
 
   function normalizeSimpleLineGross(data) {
     if (!Array.isArray(data)) {
-      console.error("Invalid data passed to normalizeSimpleLineGross:", data);
+      console.error('Invalid data passed to normalizeSimpleLineGross:', data);
       return [];
     }
     return data.map(item => ({
@@ -143,7 +143,7 @@ import {
 
   function normalizeSimpleLineDept(data) {
     if (!Array.isArray(data)) {
-      console.error("Invalid data passed to normalizeSimpleLineDept:", data);
+      console.error('Invalid data passed to normalizeSimpleLineDept:', data);
       return [];
     }
     return data.map(item => ({
@@ -153,5 +153,5 @@ import {
   }
 
   const normalizeNumber = ( number ) => {
-    return number !== undefined ? number / NORMILIZE_NUMBER : undefined
-  }
+    return number !== undefined ? number / NORMILIZE_NUMBER : undefined;
+  };

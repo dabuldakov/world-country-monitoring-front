@@ -7,7 +7,7 @@ import {
     Tooltip,
     Legend,
     ResponsiveContainer,
-  } from "recharts";
+  } from 'recharts';
 
     const NORMILIZE_NUMBER = 1000000;
 
@@ -38,7 +38,7 @@ export function PopulationSimpleLine({ data }) {
 
     function normalizeGetPopulationSimpleLine(data) {
     if (!Array.isArray(data)) {
-        console.error("Invalid data passed to normalizeGetPopulationSimpleLine:", data);
+        console.error('Invalid data passed to normalizeGetPopulationSimpleLine:', data);
         return [];
     }
     return data.map(item => ({
@@ -48,6 +48,6 @@ export function PopulationSimpleLine({ data }) {
     }
 
   const normalizeNumber = ( number ) => {
-    return number !== undefined ? number / NORMILIZE_NUMBER : undefined
-  }
+    return number !== undefined ? number / NORMILIZE_NUMBER : undefined;
+  };
 

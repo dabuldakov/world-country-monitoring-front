@@ -1,18 +1,49 @@
-import js from "@eslint/js";
-import globals from "globals";
-import pluginReact from "eslint-plugin-react";
-import { defineConfig } from "eslint/config";
-
+import { defineConfig } from 'eslint-define-config';
+import js from '@eslint/js';
+import globals from 'globals';
+import pluginReact from 'eslint-plugin-react';
 
 export default defineConfig([
-  { files: ["**/*.{js,mjs,cjs,jsx}"], plugins: { js }, extends: ["js/recommended"] },
-  { files: ["**/*.{js,mjs,cjs,jsx}"], languageOptions: { globals: globals.browser } },
-  pluginReact.configs.flat.recommended,
+  // Base ESLint recommended config
+  js.configs.recommended,
+
+  // React configuration
   {
+    files: ['**/*.{js,jsx}'],
+    plugins: {
+      react: pluginReact
+    },
+    languageOptions: {
+      globals: {
+        ...globals.browser,
+        ...globals.es2021
+      },
+      parserOptions: {
+        ecmaFeatures: {
+          jsx: true
+        },
+        sourceType: 'module'
+      }
+    },
     settings: {
       react: {
-        version: "detect"
+        version: 'detect'
       }
+    },
+    rules: {
+      ...pluginReact.configs.recommended.rules,
+      'react/react-in-jsx-scope': 'off',
+      'react/jsx-uses-react': 'off'
+    }
+  },
+
+  // Custom rules
+  {
+    rules: {
+      'semi': ['error', 'always'],
+      'quotes': ['error', 'single'],
+      'no-unused-vars': 'warn',
+      'no-console': 'warn'
     }
   }
 ]);
