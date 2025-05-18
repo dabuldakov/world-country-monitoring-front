@@ -31,7 +31,7 @@ import {
             <Tooltip />
             <Legend />
             <Line type="monotone" dataKey="amount" stroke="#8884d8" activeDot={{ r: 8 }}  strokeWidth={2} />
-            <Line type="monotone" dataKey="foreignExchange" label = "foreign exchange" stroke="#82ca9d"  strokeWidth={2} />
+            <Line type="monotone" dataKey="foreignExchange" label = "foreign exchange" stroke="#C71585"  strokeWidth={2} />
             <Line type="monotone" dataKey="monetaryGold" label="monetary gold" stroke="#55ca9d"  strokeWidth={2} />
           </LineChart>
           </ResponsiveContainer>
@@ -57,9 +57,9 @@ import {
         <YAxis />
         <Tooltip />
         <Legend />
-        <Line type="monotone" dataKey="absolut" stroke="#8884d8" activeDot={{ r: 8 }}  strokeWidth={2} />
+        <Line type="monotone" dataKey="absolut" stroke="#C71585" activeDot={{ r: 8 }}  strokeWidth={2} />
         <Line type="monotone" dataKey="purchasingPowerParities" label = "foreign exchange" stroke="#82ca9d"  strokeWidth={2} />
-        <Line type="monotone" dataKey="current" label = "current" stroke="#C71585"  strokeWidth={2} />
+        <Line type="monotone" dataKey="current" label = "current" stroke="#8884d8"  strokeWidth={2} />
       </LineChart>
       </ResponsiveContainer>
     );
