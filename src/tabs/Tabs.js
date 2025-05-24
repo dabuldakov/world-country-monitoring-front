@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
-import { SimpleLineMonetaryReserves, SimpleLineGross, SimpleLineDept, SimpleLineDeptGross } from '../chart/SimpleLine';
+import { SimpleLineMonetaryReserves, SimpleLineGross, SimpleLineDept, SimpleLineDeptGross, SimpleLineMoneySupply } from '../chart/SimpleLine';
 import { BarColumnDebtGrossAllCountries, BarColumnGrossDataAllCountries, BarColumnReservesAllCountries } from '../chart/BarColumn';
 import { fetchDataReserves, fetchDataGrossDomestic, fetchDataGrossDomesticAllCountries, fetchDataReservesAllCountries,
-    fetchDataDept, fetchDataDeptGross, fetchDataDebtGrossPercentageAllCountries
+    fetchDataDept, fetchDataDeptGross, fetchDataDebtGrossPercentageAllCountries, fetchDataMoneySupply
  } from '../rest/RestService';
 
 import { Tabs, Tab, Box } from '@mui/material';
@@ -16,6 +16,7 @@ export function GetMainTabs({ selectedCountry }) {
       const [debtData, setDebtData] = useState();
       const [debtGrossData, setDebtGrossData] = useState();
       const [debtGrossPercentageData, setDebtGrossPercentageData] = useState();
+      const [moneySupplyData, setMoneySupplyData] = useState();
       const [activeTab, setActiveTab] = useState(0);
 
       useEffect(() => {
@@ -41,6 +42,9 @@ export function GetMainTabs({ selectedCountry }) {
         
               const debtGrossPercentage = await fetchDataDebtGrossPercentageAllCountries();
               setDebtGrossPercentageData(debtGrossPercentage);
+
+              const moneySupply = await fetchDataMoneySupply({ selectedCountry });
+              setMoneySupplyData(moneySupply);
             } catch (error) {
               console.error('Error fetching data:', error);
             }
@@ -68,6 +72,7 @@ export function GetMainTabs({ selectedCountry }) {
           <Tab label="Gross Domestic Product" />
           <Tab label="Debt" />
           <Tab label="Debt / Gross" />
+          <Tab label="Money Supply" />
         </Tabs>
       </Box>
       <div>
@@ -95,6 +100,12 @@ export function GetMainTabs({ selectedCountry }) {
             <SimpleLineDeptGross data={debtGrossData} />
             <div>All countries for 2022 year</div>
             <BarColumnDebtGrossAllCountries data={debtGrossPercentageData} />
+          </div>
+        )}
+        {activeTab === 4 && (
+          <div>
+            <SimpleLineMoneySupply data={moneySupplyData} />
+            <div>All countries for 2022 year</div>
           </div>
         )}
       </div>

@@ -115,6 +115,31 @@ import {
     );
   }
 
+  export function SimpleLineMoneySupply({ data }) {
+    return (
+      <ResponsiveContainer width="100%" height={400}>
+      <LineChart
+        width={500}
+        height={300}
+        data={normalizeSimpleLineMoneySupply(data)}
+        margin={{
+          top: 5,
+          right: 30,
+          left: 20,
+          bottom: 5,
+        }}
+      >
+        <CartesianGrid strokeDasharray="3 3" />
+        <XAxis dataKey="date" />
+        <YAxis />
+        <Tooltip />
+        <Legend />
+        <Line type="monotone" dataKey="amountUsd" stroke="#8884d8" activeDot={{ r: 8 }} strokeWidth={2} />
+      </LineChart>
+      </ResponsiveContainer>
+    );
+  }
+
   function normalizeSimpleLineMonetaryReserves(data) {
     if (!Array.isArray(data)) {
       console.error('Invalid data passed to normalizeSimpleLineMonetaryReserves:', data);
@@ -149,6 +174,17 @@ import {
     return data.map(item => ({
       ...item,
       foreign: normalizeNumber(item.foreign),
+    }));
+  }
+
+    function normalizeSimpleLineMoneySupply(data) {
+    if (!Array.isArray(data)) {
+      console.error('Invalid data passed to normalizeSimpleLineMoneySupply:', data);
+      return [];
+    }
+    return data.map(item => ({
+      ...item,
+      amountUsd: normalizeNumber(item.amountUsd),
     }));
   }
 

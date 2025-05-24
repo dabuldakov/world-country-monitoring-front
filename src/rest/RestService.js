@@ -7,6 +7,7 @@ const debtApi = 'api/wcm/v0/debt/country';
 const debtGrossApi ='api/wcm/v0/debt/debt-gross/country';
 const debtGrossPercentageApi ='api/wcm/v0/debt/year';
 const populationApi = 'api/wcm/v0/population/country';
+const moneySupplyApi = 'api/wcm/v0/money-supply/country';
 
 export const fetchDataReserves = async ({ selectedCountry }) => {
   return fetchData(`${baseUrl}/${reservesApi}/${selectedCountry}`);
@@ -38,6 +39,10 @@ export const fetchDataDebtGrossPercentageAllCountries = async () => {
 
 export const fetchDataPopulation = async ({ selectedCountry }) => {
   return fetchData(`${baseUrl}/${populationApi}/${selectedCountry}`);
+};
+
+export const fetchDataMoneySupply = async ({ selectedCountry }) => {
+  return fetchData(`${baseUrl}/${moneySupplyApi}/${selectedCountry}`);
 };
 
 const fetchData = async (url) => {
