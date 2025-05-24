@@ -14,7 +14,10 @@ return (
     <div className="App">
       <h2>Country Monitoring</h2>
       <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-        <CountryButton selectedCountry={selectedCountry} setSelectedCountry={setSelectedCountry} />
+        <CountryButton 
+        selectedCountry={selectedCountry} 
+        setSelectedCountry={setSelectedCountry}
+        />
         <EconomicButton activeGroup={activeGroup} setActiveGroup={setActiveGroup} />
         <SocialButton activeGroup={activeGroup} setActiveGroup={setActiveGroup} />
       </div>

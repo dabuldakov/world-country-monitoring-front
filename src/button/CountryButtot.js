@@ -1,14 +1,29 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { fetchDataCountries } from '../rest/RestService';
 
 import { Select, MenuItem, FormControl } from '@mui/material';
 
 export function CountryButton({ selectedCountry, setSelectedCountry }) {
-
-    const [countries, setCountries] = useState(['RUS', 'USA', 'FRA', 'DEU', 'CHN', 'IND', 'AUS', 'GBR']);
     
+    const [countries, setCountries] = useState([]);
+  
     const handleCountryChange = (event) => {
         setSelectedCountry(event.target.value);
       };
+
+    
+    useEffect(() => {
+    const fetchCountries = async () => {
+      try {
+        const fetchedCountries = await fetchDataCountries();
+        setCountries(fetchedCountries);
+      } catch (error) {
+        console.error('Error fetching countries:', error);
+      }
+    };
+
+    fetchCountries();
+    }, []); 
 
     return (
       <div>

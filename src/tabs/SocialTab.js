@@ -19,12 +19,12 @@ export function GetSocialTab({ selectedCountry }) {
           }
         };
 
-        fetchData();
-        }, [selectedCountry]);
+    fetchData();
+    }, [selectedCountry]);
 
     const handleTabChange = (event, newValue) => {
         setActiveTab(newValue);
-      };
+    };
 
   return (
     <div>
