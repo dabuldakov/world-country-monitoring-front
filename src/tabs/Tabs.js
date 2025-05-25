@@ -4,10 +4,13 @@ import { BarColumnDebtGrossAllCountries, BarColumnGrossDataAllCountries, BarColu
 import { fetchDataReserves, fetchDataGrossDomestic, fetchDataGrossDomesticAllCountries, fetchDataReservesAllCountries,
     fetchDataDept, fetchDataDeptGross, fetchDataDebtGrossPercentageAllCountries, fetchDataMoneySupply
  } from '../rest/RestService';
+ import { useCountriesContext } from '../provider/CountriesProvider';
 
 import { Tabs, Tab, Box } from '@mui/material';
 
-export function GetMainTabs({ selectedCountry }) {
+export function GetMainTabs() {
+
+      const { selectedCountry } = useCountriesContext();
 
       const [reserveData, setReserveData] = useState();
       const [reserveAllCOuntriesData, setReserveAllCountriesData] = useState();

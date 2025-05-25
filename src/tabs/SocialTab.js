@@ -3,9 +3,11 @@ import { useEffect, useState } from 'react';
 import { Tabs, Tab, Box } from '@mui/material';
 import { PopulationSimpleLine } from '../chart/Population';
 import { fetchDataPopulation } from '../rest/RestService';
+import { useCountriesContext } from '../provider/CountriesProvider';
 
-export function GetSocialTab({ selectedCountry }) {
+export function GetSocialTab() {
 
+    const { selectedCountry } = useCountriesContext();
     const [populationData, setPopulationData] = useState();
     const [activeTab, setActiveTab] = useState(0);
 

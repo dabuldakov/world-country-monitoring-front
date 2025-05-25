@@ -5,6 +5,7 @@ const CountriesContext = createContext([]);
 
 export function CountriesProvider({ children }) {
   const [countries, setCountries] = useState([]);
+  const [selectedCountry, setSelectedCountry] = useState('RUS');
 
   useEffect(() => {
     const fetchCountries = async () => {
@@ -19,12 +20,13 @@ export function CountriesProvider({ children }) {
   }, []);
 
   return (
-    <CountriesContext.Provider value={countries}>
+    <CountriesContext.Provider 
+    value={{ countries, setSelectedCountry, selectedCountry }}>
       {children}
     </CountriesContext.Provider>
   );
 }
 
-export function useCountries() {
+export function useCountriesContext() {
   return useContext(CountriesContext);
 }

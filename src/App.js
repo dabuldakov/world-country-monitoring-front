@@ -8,7 +8,6 @@ import { CountriesProvider } from './provider/CountriesProvider';
 
 export default function App() {
 
-  const [selectedCountry, setSelectedCountry] = useState('RUS');
   const [activeGroup, setActiveGroup] = useState('economic');
 
 return (
@@ -16,19 +15,16 @@ return (
     <div className="App">
       <h2>Country Monitoring</h2>
       <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-        <CountryButton 
-        selectedCountry={selectedCountry} 
-        setSelectedCountry={setSelectedCountry}
-        />
+        <CountryButton/>
         <EconomicButton activeGroup={activeGroup} setActiveGroup={setActiveGroup} />
         <SocialButton activeGroup={activeGroup} setActiveGroup={setActiveGroup} />
       </div>
       <div style={{ marginTop: 24 }}>
         {activeGroup === 'economic' && (
-          <GetMainTabs selectedCountry={selectedCountry} />
+          <GetMainTabs/>
         )}
         {activeGroup === 'social' && (
-          <GetSocialTab selectedCountry={selectedCountry} />
+          <GetSocialTab/>
         )}
       </div>
     </div>
