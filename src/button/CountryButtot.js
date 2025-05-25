@@ -27,15 +27,23 @@ export function CountryButton({ selectedCountry, setSelectedCountry }) {
 
     return (
       <div>
-        <FormControl sx={{ minWidth: 50, marginBottom: 2, minHeight: 20, marginLeft: 1, marginBottom: 1 }}>
+        <FormControl sx={{ 
+          width: 200, 
+          marginBottom: 2, 
+          minHeight: 20, 
+          marginLeft: 1 }}>
         <Select
           labelId="country-select-label"
           value={selectedCountry}
           onChange={handleCountryChange}
         >
           {countries.map((country) => (
-            <MenuItem key={country} value={country}>
-              {country}
+            <MenuItem 
+              key={country.code} 
+              value={country.code}
+              title={country.code}
+            >
+              {country.name}
             </MenuItem>
           ))}
         </Select>

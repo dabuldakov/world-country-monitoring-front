@@ -47,8 +47,7 @@ export const fetchDataMoneySupply = async ({ selectedCountry }) => {
 };
 
 export const fetchDataCountries = async () => {
-  const data = await fetchData(`${baseUrl}/${countryApi}`);
-  return data.map((item) => item.code);
+  return fetchData(`${baseUrl}/${countryApi}`);
 };
 
 const fetchData = async (url) => {
