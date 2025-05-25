@@ -1,3 +1,4 @@
+import { useCountries } from '../provider/CountriesProvider';
 import {
     BarChart,
     Bar,
@@ -8,7 +9,7 @@ import {
     Legend,
     ResponsiveContainer,
   } from 'recharts';
-  
+
   const NORMILIZE_NUMBER = 1000000;
 
   export function BarColumnDebtGrossAllCountries({ data }) {
@@ -26,7 +27,7 @@ import {
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="countryCode" />
           <YAxis />
-          <Tooltip />
+          <Tooltip content={<CustomTooltip />} />
           <Legend />
           <Bar dataKey="percentageToGDP" fill="#8884d8"/>
         </BarChart>
@@ -49,7 +50,7 @@ export function BarColumnGrossDataAllCountries({ data }) {
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="countryCode" />
         <YAxis />
-        <Tooltip />
+        <Tooltip content={<CustomTooltip />} />
         <Legend />
         <Bar dataKey="current" fill="#8884d8"/>
       </BarChart>
@@ -72,7 +73,7 @@ export function BarColumnReservesAllCountries({ data }) {
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="countryCode" />
         <YAxis />
-        <Tooltip />
+        <Tooltip content={<CustomTooltip />} />
         <Legend />
         <Bar dataKey="amount" fill="#8884d8"/>
       </BarChart>
@@ -105,3 +106,19 @@ function normalizeBarColumnGrossDataAllCountries(data) {
 const normalizeNumber = ( number ) => {
   return number !== undefined ? number / NORMILIZE_NUMBER : undefined;
 };
+
+function CustomTooltip({ active, payload, label }) {
+  const countries = useCountries();
+  if (active && payload && payload.length) {
+    const countryCode = payload[0].payload.countryCode;
+    const country = countries.find(c => c.code === countryCode);
+    const countryName = country ? country.name : countryCode;
+    return (
+      <div style={{ background: '#fff', border: '1px solid #ccc', padding: 8 }}>
+        <div><strong>Country </strong> {countryName}</div>
+        <div><strong>Amount </strong> {payload[0].value}</div>
+      </div>
+    );
+  }
+  return null;
+}

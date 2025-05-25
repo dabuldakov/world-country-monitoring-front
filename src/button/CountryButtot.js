@@ -32,6 +32,7 @@ export function CountryButton({ selectedCountry, setSelectedCountry }) {
           marginBottom: 2, 
           minHeight: 20, 
           marginLeft: 1 }}>
+        {countries.length > 0 && (
         <Select
           labelId="country-select-label"
           value={selectedCountry}
@@ -47,6 +48,7 @@ export function CountryButton({ selectedCountry, setSelectedCountry }) {
             </MenuItem>
           ))}
         </Select>
+        )}
         </FormControl>
       </div>
     );

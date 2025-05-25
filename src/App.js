@@ -4,6 +4,7 @@ import { GetMainTabs } from './tabs/Tabs';
 import { CountryButton } from './button/CountryButtot';
 import { GetSocialTab } from './tabs/SocialTab';
 import { EconomicButton, SocialButton } from './button/GroupButton';
+import { CountriesProvider } from './provider/CountriesProvider';
 
 export default function App() {
 
@@ -11,6 +12,7 @@ export default function App() {
   const [activeGroup, setActiveGroup] = useState('economic');
 
 return (
+  <CountriesProvider>
     <div className="App">
       <h2>Country Monitoring</h2>
       <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
@@ -30,5 +32,6 @@ return (
         )}
       </div>
     </div>
+  </CountriesProvider>
   );
 }
