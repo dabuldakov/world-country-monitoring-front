@@ -1,4 +1,4 @@
-import { useCountriesContext } from '../provider/CountriesProvider';
+import { useApplicationContext } from '../provider/CountriesProvider';
 import {
     BarChart,
     Bar,
@@ -108,7 +108,7 @@ const normalizeNumber = ( number ) => {
 };
 
 function CustomTooltip({ active, payload, label }) {
-  const { countries } = useCountriesContext();
+  const { countries } = useApplicationContext();
   if (active && payload && payload.length) {
     const countryCode = payload[0].payload.countryCode;
     const country = countries.find(c => c.code === countryCode);

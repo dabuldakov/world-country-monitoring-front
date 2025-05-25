@@ -1,9 +1,9 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import { fetchDataCountries } from '../rest/RestService';
 
-const CountriesContext = createContext([]);
+const ApplicationContext = createContext([]);
 
-export function CountriesProvider({ children }) {
+export function ContextProvider({ children }) {
   const [countries, setCountries] = useState([]);
   const [selectedCountry, setSelectedCountry] = useState('RUS');
 
@@ -20,13 +20,13 @@ export function CountriesProvider({ children }) {
   }, []);
 
   return (
-    <CountriesContext.Provider 
-    value={{ countries, setSelectedCountry, selectedCountry }}>
+    <ApplicationContext.Provider 
+    value={{ countries, selectedCountry, setSelectedCountry }}>
       {children}
-    </CountriesContext.Provider>
+    </ApplicationContext.Provider>
   );
 }
 
-export function useCountriesContext() {
-  return useContext(CountriesContext);
+export function useApplicationContext() {
+  return useContext(ApplicationContext);
 }

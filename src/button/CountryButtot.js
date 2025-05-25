@@ -1,9 +1,9 @@
-import { useCountriesContext } from '../provider/CountriesProvider';
+import { useApplicationContext } from '../provider/CountriesProvider';
 
 import { Select, MenuItem, FormControl } from '@mui/material';
 
 export function CountryButton() {
-    const { countries, selectedCountry, setSelectedCountry } = useCountriesContext();
+    const { countries, selectedCountry, setSelectedCountry } = useApplicationContext();
   
     const handleCountryChange = (event) => {
         setSelectedCountry(event.target.value);
