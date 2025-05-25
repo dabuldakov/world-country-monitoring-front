@@ -5,6 +5,7 @@ import { CountryButton } from './button/CountryButtot';
 import { GetSocialTab } from './tabs/SocialTab';
 import { EconomicButton, SocialButton } from './button/GroupButton';
 import { ContextProvider } from './provider/CountriesProvider';
+import './App.css';
 
 export default function App() {
 
@@ -27,6 +28,8 @@ return (
           <GetSocialTab/>
         )}
       </div>
+      <div className='support-info'>
+        support dabuldakov@mail.ru</div>
     </div>
   </ContextProvider>
   );
