@@ -15,8 +15,19 @@ import { useApplicationContext } from '../provider/CountriesProvider';
 const NORMALIZE_NUMBER = 1000000;
 const ACTIVE_BAR_COLOR = '#ef4444';
 
+function useCountryBarClick() {
+  const { setSelectedCountry } = useApplicationContext();
+
+  return (entry) => {
+    if (entry?.countryCode) {
+      setSelectedCountry(entry.countryCode);
+    }
+  };
+}
+
 export function BarColumnDebtGrossAllCountries({ data }) {
   const { locale, t } = useApplicationContext();
+  const handleCountryClick = useCountryBarClick();
   const formatValue = (value) => formatNumber(value, locale);
   const chartData = Array.isArray(data) ? data : [];
 
@@ -28,7 +39,7 @@ export function BarColumnDebtGrossAllCountries({ data }) {
         <YAxis tickFormatter={formatValue} />
         <Tooltip content={<CustomTooltip valueLabel={t('debtToGdp')} />} />
         <Legend />
-        <Bar dataKey="percentageToGDP" name={t('debtToGdp')} fill="#8884d8" activeBar={{ fill: ACTIVE_BAR_COLOR }} />
+        <Bar dataKey="percentageToGDP" name={t('debtToGdp')} fill="#8884d8" activeBar={{ fill: ACTIVE_BAR_COLOR }} onClick={handleCountryClick} />
       </BarChart>
     </ResponsiveContainer>
   );
@@ -36,6 +47,7 @@ export function BarColumnDebtGrossAllCountries({ data }) {
 
 export function BarColumnGrossDataAllCountries({ data }) {
   const { locale, t } = useApplicationContext();
+  const handleCountryClick = useCountryBarClick();
   const formatValue = (value) => formatNumber(value, locale);
 
   return (
@@ -46,7 +58,7 @@ export function BarColumnGrossDataAllCountries({ data }) {
         <YAxis tickFormatter={formatValue} />
         <Tooltip content={<CustomTooltip valueLabel={t('current')} />} />
         <Legend />
-        <Bar dataKey="current" name={t('current')} fill="#8884d8" activeBar={{ fill: ACTIVE_BAR_COLOR }} />
+        <Bar dataKey="current" name={t('current')} fill="#8884d8" activeBar={{ fill: ACTIVE_BAR_COLOR }} onClick={handleCountryClick} />
       </BarChart>
     </ResponsiveContainer>
   );
@@ -54,6 +66,7 @@ export function BarColumnGrossDataAllCountries({ data }) {
 
 export function BarColumnReservesAllCountries({ data }) {
   const { locale, t } = useApplicationContext();
+  const handleCountryClick = useCountryBarClick();
   const formatValue = (value) => formatNumber(value, locale);
 
   return (
@@ -64,7 +77,7 @@ export function BarColumnReservesAllCountries({ data }) {
         <YAxis tickFormatter={formatValue} />
         <Tooltip content={<CustomTooltip valueLabel={t('amount')} />} />
         <Legend />
-        <Bar dataKey="amount" name={t('amount')} fill="#8884d8" activeBar={{ fill: ACTIVE_BAR_COLOR }} />
+        <Bar dataKey="amount" name={t('amount')} fill="#8884d8" activeBar={{ fill: ACTIVE_BAR_COLOR }} onClick={handleCountryClick} />
       </BarChart>
     </ResponsiveContainer>
   );
