@@ -13,6 +13,7 @@ import { formatNumber, getCountryName } from '../i18n/locales';
 import { useApplicationContext } from '../provider/CountriesProvider';
 
 const NORMALIZE_NUMBER = 1000000;
+const ACTIVE_BAR_COLOR = '#ef4444';
 
 export function BarColumnDebtGrossAllCountries({ data }) {
   const { locale, t } = useApplicationContext();
@@ -27,7 +28,7 @@ export function BarColumnDebtGrossAllCountries({ data }) {
         <YAxis tickFormatter={formatValue} />
         <Tooltip content={<CustomTooltip valueLabel={t('debtToGdp')} />} />
         <Legend />
-        <Bar dataKey="percentageToGDP" name={t('debtToGdp')} fill="#8884d8" />
+        <Bar dataKey="percentageToGDP" name={t('debtToGdp')} fill="#8884d8" activeBar={{ fill: ACTIVE_BAR_COLOR }} />
       </BarChart>
     </ResponsiveContainer>
   );
@@ -45,7 +46,7 @@ export function BarColumnGrossDataAllCountries({ data }) {
         <YAxis tickFormatter={formatValue} />
         <Tooltip content={<CustomTooltip valueLabel={t('current')} />} />
         <Legend />
-        <Bar dataKey="current" name={t('current')} fill="#8884d8" />
+        <Bar dataKey="current" name={t('current')} fill="#8884d8" activeBar={{ fill: ACTIVE_BAR_COLOR }} />
       </BarChart>
     </ResponsiveContainer>
   );
@@ -63,7 +64,7 @@ export function BarColumnReservesAllCountries({ data }) {
         <YAxis tickFormatter={formatValue} />
         <Tooltip content={<CustomTooltip valueLabel={t('amount')} />} />
         <Legend />
-        <Bar dataKey="amount" name={t('amount')} fill="#8884d8" />
+        <Bar dataKey="amount" name={t('amount')} fill="#8884d8" activeBar={{ fill: ACTIVE_BAR_COLOR }} />
       </BarChart>
     </ResponsiveContainer>
   );
