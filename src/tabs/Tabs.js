@@ -1,117 +1,123 @@
 import { useEffect, useState } from 'react';
-import { SimpleLineMonetaryReserves, SimpleLineGross, SimpleLineDept, SimpleLineDeptGross, SimpleLineMoneySupply } from '../chart/SimpleLine';
-import { BarColumnDebtGrossAllCountries, BarColumnGrossDataAllCountries, BarColumnReservesAllCountries } from '../chart/BarColumn';
-import { fetchDataReserves, fetchDataGrossDomestic, fetchDataGrossDomesticAllCountries, fetchDataReservesAllCountries,
-    fetchDataDept, fetchDataDeptGross, fetchDataDebtGrossPercentageAllCountries, fetchDataMoneySupply
- } from '../rest/RestService';
- import { useApplicationContext } from '../provider/CountriesProvider';
+import { Box, Tab, Tabs } from '@mui/material';
 
-import { Tabs, Tab, Box } from '@mui/material';
+import {
+  BarColumnDebtGrossAllCountries,
+  BarColumnGrossDataAllCountries,
+  BarColumnReservesAllCountries,
+} from '../chart/BarColumn';
+import {
+  SimpleLineDept,
+  SimpleLineDeptGross,
+  SimpleLineGross,
+  SimpleLineMonetaryReserves,
+  SimpleLineMoneySupply,
+} from '../chart/SimpleLine';
+import { useApplicationContext } from '../provider/CountriesProvider';
+import {
+  fetchDataDebtGrossPercentageAllCountries,
+  fetchDataDept,
+  fetchDataDeptGross,
+  fetchDataGrossDomestic,
+  fetchDataGrossDomesticAllCountries,
+  fetchDataMoneySupply,
+  fetchDataReserves,
+  fetchDataReservesAllCountries,
+} from '../rest/RestService';
 
 export function GetMainTabs() {
+  const { selectedCountry, t } = useApplicationContext();
+  const [reserveData, setReserveData] = useState([]);
+  const [reserveAllCountriesData, setReserveAllCountriesData] = useState([]);
+  const [grossData, setGrossData] = useState([]);
+  const [grossDataAllCountries, setGrossDataAllCountries] = useState([]);
+  const [debtData, setDebtData] = useState([]);
+  const [debtGrossData, setDebtGrossData] = useState([]);
+  const [debtGrossPercentageData, setDebtGrossPercentageData] = useState([]);
+  const [moneySupplyData, setMoneySupplyData] = useState([]);
+  const [activeTab, setActiveTab] = useState(0);
 
-      const { selectedCountry } = useApplicationContext();
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [reserves, gross, grossAllCountries, reservesAllCountries, debt, debtGross, debtGrossPercentage, moneySupply] = await Promise.all([
+          fetchDataReserves({ selectedCountry }),
+          fetchDataGrossDomestic({ selectedCountry }),
+          fetchDataGrossDomesticAllCountries(),
+          fetchDataReservesAllCountries(),
+          fetchDataDept({ selectedCountry }),
+          fetchDataDeptGross({ selectedCountry }),
+          fetchDataDebtGrossPercentageAllCountries(),
+          fetchDataMoneySupply({ selectedCountry }),
+        ]);
 
-      const [reserveData, setReserveData] = useState();
-      const [reserveAllCOuntriesData, setReserveAllCountriesData] = useState();
-      const [grossData, setGrossData] = useState();
-      const [grossDataAllCountries, setGrossDataAllCountries] = useState();
-      const [debtData, setDebtData] = useState();
-      const [debtGrossData, setDebtGrossData] = useState();
-      const [debtGrossPercentageData, setDebtGrossPercentageData] = useState();
-      const [moneySupplyData, setMoneySupplyData] = useState();
-      const [activeTab, setActiveTab] = useState(0);
+        setReserveData(reserves);
+        setGrossData(gross);
+        setGrossDataAllCountries(grossAllCountries);
+        setReserveAllCountriesData(reservesAllCountries);
+        setDebtData(debt);
+        setDebtGrossData(debtGross);
+        setDebtGrossPercentageData(debtGrossPercentage);
+        setMoneySupplyData(moneySupply);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
 
-      useEffect(() => {
-        const fetchData = async () => {
-            try {
-              const reserves = await fetchDataReserves({ selectedCountry });
-              setReserveData(reserves);
-        
-              const gross = await fetchDataGrossDomestic({ selectedCountry });
-              setGrossData(gross);
-        
-              const grossAllCountries = await fetchDataGrossDomesticAllCountries();
-              setGrossDataAllCountries(grossAllCountries);
-        
-              const reservesAllCountries = await fetchDataReservesAllCountries();
-              setReserveAllCountriesData(reservesAllCountries);
-        
-              const dept = await fetchDataDept({ selectedCountry });
-              setDebtData(dept);
-        
-              const deptGross = await fetchDataDeptGross({ selectedCountry });
-              setDebtGrossData(deptGross);
-        
-              const debtGrossPercentage = await fetchDataDebtGrossPercentageAllCountries();
-              setDebtGrossPercentageData(debtGrossPercentage);
+    fetchData();
+  }, [selectedCountry]);
 
-              const moneySupply = await fetchDataMoneySupply({ selectedCountry });
-              setMoneySupplyData(moneySupply);
-            } catch (error) {
-              console.error('Error fetching data:', error);
-            }
-        };
+  const handleTabChange = (_event, newValue) => {
+    setActiveTab(newValue);
+  };
 
-        fetchData();
-        }, [selectedCountry]);
-
-      const handleTabChange = (event, newValue) => {
-        setActiveTab(newValue);
-      };
-
-      
-    return (
+  return (
     <div>
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-        <Tabs 
-          value={activeTab} 
+        <Tabs
+          value={activeTab}
           onChange={handleTabChange}
           variant="scrollable"
           scrollButtons="auto"
           allowScrollButtonsMobile
         >
-          <Tab label="Monetary Reserves" />
-          <Tab label="Gross Domestic Product" />
-          <Tab label="Debt" />
-          <Tab label="Debt / Gross" />
-          <Tab label="Money Supply" />
+          <Tab label={t('monetaryReserves')} />
+          <Tab label={t('grossDomesticProduct')} />
+          <Tab label={t('debt')} />
+          <Tab label={t('debtToGross')} />
+          <Tab label={t('moneySupply')} />
         </Tabs>
       </Box>
       <div>
         {activeTab === 0 && (
           <div>
             <SimpleLineMonetaryReserves data={reserveData} />
-            <div>All countries for 2023 year</div>
-            <BarColumnReservesAllCountries data={reserveAllCOuntriesData} />
+            <div>{t('allCountriesForYear', { year: 2023 })}</div>
+            <BarColumnReservesAllCountries data={reserveAllCountriesData} />
           </div>
         )}
         {activeTab === 1 && (
           <div>
             <SimpleLineGross data={grossData} />
-            <div>All countries for 2023 year</div>
+            <div>{t('allCountriesForYear', { year: 2023 })}</div>
             <BarColumnGrossDataAllCountries data={grossDataAllCountries} />
           </div>
         )}
-        {activeTab === 2 && (
-          <div>
-            <SimpleLineDept data={debtData} />
-          </div>
-        )}
+        {activeTab === 2 && <SimpleLineDept data={debtData} />}
         {activeTab === 3 && (
           <div>
             <SimpleLineDeptGross data={debtGrossData} />
-            <div>All countries for 2022 year</div>
+            <div>{t('allCountriesForYear', { year: 2022 })}</div>
             <BarColumnDebtGrossAllCountries data={debtGrossPercentageData} />
           </div>
         )}
         {activeTab === 4 && (
           <div>
             <SimpleLineMoneySupply data={moneySupplyData} />
-            <div>All countries for 2022 year</div>
+            <div>{t('allCountriesForYear', { year: 2022 })}</div>
           </div>
         )}
       </div>
     </div>
-    );
+  );
 }

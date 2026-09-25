@@ -1,193 +1,186 @@
 import {
-    LineChart, 
-    Line, 
-    XAxis,
-    YAxis,
-    CartesianGrid,
-    Tooltip,
-    Legend,
-    ResponsiveContainer,
-  } from 'recharts';
+  CartesianGrid,
+  Legend,
+  Line,
+  LineChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from 'recharts';
 
-    const NORMILIZE_NUMBER = 1000000;
+import { formatDate, formatNumber } from '../i18n/locales';
+import { useApplicationContext } from '../provider/CountriesProvider';
 
-    export function SimpleLineMonetaryReserves({ data }) {
-        return (
-          <ResponsiveContainer width="100%" height={400}>
-          <LineChart
-            width={500}
-            height={300}
-            data={normalizeSimpleLineMonetaryReserves(data)}
-            margin={{
-              top: 5,
-              right: 30,
-              left: 20,
-              bottom: 5,
-            }}
-          >
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="date" />
-            <YAxis />
-            <Tooltip />
-            <Legend />
-            <Line type="monotone" dataKey="amount" stroke="#8884d8" activeDot={{ r: 8 }}  strokeWidth={2} />
-            <Line type="monotone" dataKey="foreignExchange" label = "foreign exchange" stroke="#C71585"  strokeWidth={2} />
-            <Line type="monotone" dataKey="monetaryGold" label="monetary gold" stroke="#55ca9d"  strokeWidth={2} />
-          </LineChart>
-          </ResponsiveContainer>
-        );
-   }
+const NORMALIZE_NUMBER = 1000000;
 
-   export function SimpleLineGross({ data }) {
-    return (
-      <ResponsiveContainer width="100%" height={400}>
+export function SimpleLineMonetaryReserves({ data }) {
+  const { locale, t } = useApplicationContext();
+  const formatValue = (value) => formatNumber(value, locale);
+
+  return (
+    <ResponsiveContainer width="100%" height={400}>
       <LineChart
         width={500}
         height={300}
-        data={normalizeSimpleLineGross(data)}
-        margin={{
-          top: 5,
-          right: 30,
-          left: 20,
-          bottom: 5,
-        }}
+        data={normalizeMonetaryReserves(data)}
+        margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
       >
         <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="date" />
-        <YAxis />
-        <Tooltip />
+        <XAxis dataKey="date" tickFormatter={(value) => formatDate(value, locale)} />
+        <YAxis tickFormatter={formatValue} />
+        <Tooltip labelFormatter={(value) => formatDate(value, locale)} formatter={formatValue} />
         <Legend />
-        <Line type="monotone" dataKey="absolut" stroke="#C71585" activeDot={{ r: 8 }}  strokeWidth={2} />
-        <Line type="monotone" dataKey="purchasingPowerParities" label = "foreign exchange" stroke="#82ca9d"  strokeWidth={2} />
-        <Line type="monotone" dataKey="current" label = "current" stroke="#8884d8"  strokeWidth={2} />
+        <Line type="monotone" dataKey="amount" name={t('totalReserves')} stroke="#8884d8" activeDot={{ r: 8 }} strokeWidth={2} />
+        <Line type="monotone" dataKey="foreignExchange" name={t('foreignExchange')} stroke="#C71585" strokeWidth={2} />
+        <Line type="monotone" dataKey="monetaryGold" name={t('monetaryGold')} stroke="#55ca9d" strokeWidth={2} />
       </LineChart>
-      </ResponsiveContainer>
-    );
-  }
+    </ResponsiveContainer>
+  );
+}
 
-  export function SimpleLineDept({ data }) {
-    return (
-      <ResponsiveContainer width="100%" height={400}>
+export function SimpleLineGross({ data }) {
+  const { locale, t } = useApplicationContext();
+  const formatValue = (value) => formatNumber(value, locale);
+
+  return (
+    <ResponsiveContainer width="100%" height={400}>
       <LineChart
         width={500}
         height={300}
-        data={normalizeSimpleLineDept(data)}
-        margin={{
-          top: 5,
-          right: 30,
-          left: 20,
-          bottom: 5,
-        }}
+        data={normalizeGross(data)}
+        margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
       >
         <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="date" />
-        <YAxis />
-        <Tooltip />
+        <XAxis dataKey="date" tickFormatter={(value) => formatDate(value, locale)} />
+        <YAxis tickFormatter={formatValue} />
+        <Tooltip labelFormatter={(value) => formatDate(value, locale)} formatter={formatValue} />
         <Legend />
-        <Line type="monotone" dataKey="foreign" stroke="#8884d8" activeDot={{ r: 8 }} strokeWidth={2} />
+        <Line type="monotone" dataKey="absolut" name={t('grossDomesticProduct')} stroke="#C71585" activeDot={{ r: 8 }} strokeWidth={2} />
+        <Line type="monotone" dataKey="purchasingPowerParities" name={t('purchasingPowerParities')} stroke="#82ca9d" strokeWidth={2} />
+        <Line type="monotone" dataKey="current" name={t('current')} stroke="#8884d8" strokeWidth={2} />
       </LineChart>
-      </ResponsiveContainer>
-    );
-  }
+    </ResponsiveContainer>
+  );
+}
 
-  export function SimpleLineDeptGross({ data }) {
-    return (
-      <ResponsiveContainer width="100%" height={400}>
+export function SimpleLineDept({ data }) {
+  const { locale, t } = useApplicationContext();
+  const formatValue = (value) => formatNumber(value, locale);
+
+  return (
+    <ResponsiveContainer width="100%" height={400}>
+      <LineChart
+        width={500}
+        height={300}
+        data={normalizeDebt(data)}
+        margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+      >
+        <CartesianGrid strokeDasharray="3 3" />
+        <XAxis dataKey="date" tickFormatter={(value) => formatDate(value, locale)} />
+        <YAxis tickFormatter={formatValue} />
+        <Tooltip labelFormatter={(value) => formatDate(value, locale)} formatter={formatValue} />
+        <Legend />
+        <Line type="monotone" dataKey="foreign" name={t('foreignDebt')} stroke="#8884d8" activeDot={{ r: 8 }} strokeWidth={2} />
+      </LineChart>
+    </ResponsiveContainer>
+  );
+}
+
+export function SimpleLineDeptGross({ data }) {
+  const { locale, t } = useApplicationContext();
+  const formatValue = (value) => formatNumber(value, locale);
+
+  return (
+    <ResponsiveContainer width="100%" height={400}>
       <LineChart
         width={500}
         height={300}
         data={data}
-        margin={{
-          top: 5,
-          right: 30,
-          left: 20,
-          bottom: 5,
-        }}
+        margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
       >
         <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="date" />
-        <YAxis />
-        <Tooltip />
+        <XAxis dataKey="date" tickFormatter={(value) => formatDate(value, locale)} />
+        <YAxis tickFormatter={formatValue} />
+        <Tooltip labelFormatter={(value) => formatDate(value, locale)} formatter={formatValue} />
         <Legend />
-        <Line type="monotone" dataKey="ratioPercentage" stroke="#8884d8" activeDot={{ r: 8 }} strokeWidth={2} />
+        <Line type="monotone" dataKey="ratioPercentage" name={t('debtToGdp')} stroke="#8884d8" activeDot={{ r: 8 }} strokeWidth={2} />
       </LineChart>
-      </ResponsiveContainer>
-    );
-  }
+    </ResponsiveContainer>
+  );
+}
 
-  export function SimpleLineMoneySupply({ data }) {
-    return (
-      <ResponsiveContainer width="100%" height={400}>
+export function SimpleLineMoneySupply({ data }) {
+  const { locale, t } = useApplicationContext();
+  const formatValue = (value) => formatNumber(value, locale);
+
+  return (
+    <ResponsiveContainer width="100%" height={400}>
       <LineChart
         width={500}
         height={300}
-        data={normalizeSimpleLineMoneySupply(data)}
-        margin={{
-          top: 5,
-          right: 30,
-          left: 20,
-          bottom: 5,
-        }}
+        data={normalizeMoneySupply(data)}
+        margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
       >
         <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="date" />
-        <YAxis />
-        <Tooltip />
+        <XAxis dataKey="date" tickFormatter={(value) => formatDate(value, locale)} />
+        <YAxis tickFormatter={formatValue} />
+        <Tooltip labelFormatter={(value) => formatDate(value, locale)} formatter={formatValue} />
         <Legend />
-        <Line type="monotone" dataKey="amountUsd" stroke="#8884d8" activeDot={{ r: 8 }} strokeWidth={2} />
+        <Line type="monotone" dataKey="amountUsd" name={t('moneySupply')} stroke="#8884d8" activeDot={{ r: 8 }} strokeWidth={2} />
       </LineChart>
-      </ResponsiveContainer>
-    );
-  }
+    </ResponsiveContainer>
+  );
+}
 
-  function normalizeSimpleLineMonetaryReserves(data) {
-    if (!Array.isArray(data)) {
-      console.error('Invalid data passed to normalizeSimpleLineMonetaryReserves:', data);
-      return [];
-    }
-    return data.map(item => ({
-      ...item,
-      amount: normalizeNumber(item.amount),
-      foreignExchange: normalizeNumber(item.foreignExchange),
-      monetaryGold: normalizeNumber(item.monetaryGold),
-    }));
+function normalizeMonetaryReserves(data) {
+  if (!Array.isArray(data)) {
+    console.error('Invalid data passed to normalizeMonetaryReserves:', data);
+    return [];
   }
+  return data.map((item) => ({
+    ...item,
+    amount: normalizeNumber(item.amount),
+    foreignExchange: normalizeNumber(item.foreignExchange),
+    monetaryGold: normalizeNumber(item.monetaryGold),
+  }));
+}
 
-  function normalizeSimpleLineGross(data) {
-    if (!Array.isArray(data)) {
-      console.error('Invalid data passed to normalizeSimpleLineGross:', data);
-      return [];
-    }
-    return data.map(item => ({
-      ...item,
-      absolut: normalizeNumber(item.absolut),
-      purchasingPowerParities: normalizeNumber(item.purchasingPowerParities),
-      current: normalizeNumber(item.current),
-    }));
+function normalizeGross(data) {
+  if (!Array.isArray(data)) {
+    console.error('Invalid data passed to normalizeGross:', data);
+    return [];
   }
+  return data.map((item) => ({
+    ...item,
+    absolut: normalizeNumber(item.absolut),
+    purchasingPowerParities: normalizeNumber(item.purchasingPowerParities),
+    current: normalizeNumber(item.current),
+  }));
+}
 
-  function normalizeSimpleLineDept(data) {
-    if (!Array.isArray(data)) {
-      console.error('Invalid data passed to normalizeSimpleLineDept:', data);
-      return [];
-    }
-    return data.map(item => ({
-      ...item,
-      foreign: normalizeNumber(item.foreign),
-    }));
+function normalizeDebt(data) {
+  if (!Array.isArray(data)) {
+    console.error('Invalid data passed to normalizeDebt:', data);
+    return [];
   }
+  return data.map((item) => ({
+    ...item,
+    foreign: normalizeNumber(item.foreign),
+  }));
+}
 
-    function normalizeSimpleLineMoneySupply(data) {
-    if (!Array.isArray(data)) {
-      console.error('Invalid data passed to normalizeSimpleLineMoneySupply:', data);
-      return [];
-    }
-    return data.map(item => ({
-      ...item,
-      amountUsd: normalizeNumber(item.amountUsd),
-    }));
+function normalizeMoneySupply(data) {
+  if (!Array.isArray(data)) {
+    console.error('Invalid data passed to normalizeMoneySupply:', data);
+    return [];
   }
+  return data.map((item) => ({
+    ...item,
+    amountUsd: normalizeNumber(item.amountUsd),
+  }));
+}
 
-  const normalizeNumber = ( number ) => {
-    return number !== undefined ? number / NORMILIZE_NUMBER : undefined;
-  };
+function normalizeNumber(value) {
+  return value === null || value === undefined ? value : value / NORMALIZE_NUMBER;
+}

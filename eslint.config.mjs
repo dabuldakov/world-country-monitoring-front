@@ -4,6 +4,9 @@ import globals from 'globals';
 import pluginReact from 'eslint-plugin-react';
 
 export default defineConfig([
+  {
+    ignores: ['build/**']
+  },
   // Base ESLint recommended config
   js.configs.recommended,
 
@@ -17,6 +20,7 @@ export default defineConfig([
       globals: {
         ...globals.browser,
         ...globals.es2021,
+        ...globals.jest,
         process: 'readonly'
       },
       parserOptions: {
@@ -43,6 +47,7 @@ export default defineConfig([
     rules: {
       'semi': ['error', 'always'],
       'quotes': ['error', 'single'],
+      'react/prop-types': 'off',
       'no-unused-vars': 'warn',
       'no-console': 'warn'
     }

@@ -1,39 +1,34 @@
+import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
+
+import { getCountryName } from '../i18n/locales';
 import { useApplicationContext } from '../provider/CountriesProvider';
 
-import { Select, MenuItem, FormControl } from '@mui/material';
-
 export function CountryButton() {
-    const { countries, selectedCountry, setSelectedCountry } = useApplicationContext();
-  
-    const handleCountryChange = (event) => {
-        setSelectedCountry(event.target.value);
-      };
+  const { countries, selectedCountry, setSelectedCountry, locale, t } = useApplicationContext();
+  const hasSelectedCountry = countries.some((country) => country.code === selectedCountry);
 
-    return (
-      <div>
-        <FormControl sx={{ 
-          width: 200, 
-          marginBottom: 2, 
-          minHeight: 20, 
-          marginLeft: 1 }}>
-        {countries.length > 0 && (
+  const handleCountryChange = (event) => {
+    setSelectedCountry(event.target.value);
+  };
+
+  return (
+    <FormControl size="small" sx={{ width: 220, marginBottom: 2, marginInlineStart: 1 }}>
+      <InputLabel id="country-select-label">{t('country')}</InputLabel>
+      {countries.length > 0 && (
         <Select
           labelId="country-select-label"
-          value={selectedCountry}
+          id="country-select"
+          value={hasSelectedCountry ? selectedCountry : ''}
+          label={t('country')}
           onChange={handleCountryChange}
         >
           {countries.map((country) => (
-            <MenuItem 
-              key={country.code} 
-              value={country.code}
-              title={country.code}
-            >
-              {country.name}
+            <MenuItem key={country.code} value={country.code} title={country.code}>
+              {getCountryName(country, locale)}
             </MenuItem>
           ))}
         </Select>
-        )}
-        </FormControl>
-      </div>
-    );
+      )}
+    </FormControl>
+  );
 }

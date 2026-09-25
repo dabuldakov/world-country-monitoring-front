@@ -1,6 +1,13 @@
+.app-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
 .support-info {
   opacity: 0.5;
-  margin-left: auto;
+  margin-inline-start: auto;
   width: fit-content;
-  text-align: right;
+  text-align: end;
 }

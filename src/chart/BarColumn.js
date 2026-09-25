@@ -1,124 +1,115 @@
-import { useApplicationContext } from '../provider/CountriesProvider';
 import {
-    BarChart,
-    Bar,
-    XAxis,
-    YAxis,
-    CartesianGrid,
-    Tooltip,
-    Legend,
-    ResponsiveContainer,
-  } from 'recharts';
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Legend,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from 'recharts';
 
-  const NORMILIZE_NUMBER = 1000000;
+import { formatNumber, getCountryName } from '../i18n/locales';
+import { useApplicationContext } from '../provider/CountriesProvider';
 
-  export function BarColumnDebtGrossAllCountries({ data }) {
-    return (
-      <ResponsiveContainer width="100%" height={400}>
-        <BarChart
-          data={data}
-          margin={{
-            top: 5,
-            right: 30,
-            left: 20,
-            bottom: 5,
-          }}
-        >
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="countryCode" />
-          <YAxis />
-          <Tooltip content={<CustomTooltip />} />
-          <Legend />
-          <Bar dataKey="percentageToGDP" fill="#8884d8"/>
-        </BarChart>
-      </ResponsiveContainer>
-    );
+const NORMALIZE_NUMBER = 1000000;
+
+export function BarColumnDebtGrossAllCountries({ data }) {
+  const { locale, t } = useApplicationContext();
+  const formatValue = (value) => formatNumber(value, locale);
+  const chartData = Array.isArray(data) ? data : [];
+
+  return (
+    <ResponsiveContainer width="100%" height={400}>
+      <BarChart data={chartData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+        <CartesianGrid strokeDasharray="3 3" />
+        <XAxis dataKey="countryCode" tickFormatter={(value) => getCountryName({ code: value }, locale)} />
+        <YAxis tickFormatter={formatValue} />
+        <Tooltip content={<CustomTooltip valueLabel={t('debtToGdp')} />} />
+        <Legend />
+        <Bar dataKey="percentageToGDP" name={t('debtToGdp')} fill="#8884d8" />
+      </BarChart>
+    </ResponsiveContainer>
+  );
 }
 
 export function BarColumnGrossDataAllCountries({ data }) {
+  const { locale, t } = useApplicationContext();
+  const formatValue = (value) => formatNumber(value, locale);
+
   return (
     <ResponsiveContainer width="100%" height={400}>
-      <BarChart
-        data={normalizeBarColumnGrossDataAllCountries(data)}
-        margin={{
-          top: 5,
-          right: 30,
-          left: 20,
-          bottom: 5,
-        }}
-      >
+      <BarChart data={normalizeGrossData(data)} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
         <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="countryCode" />
-        <YAxis />
-        <Tooltip content={<CustomTooltip />} />
+        <XAxis dataKey="countryCode" tickFormatter={(value) => getCountryName({ code: value }, locale)} />
+        <YAxis tickFormatter={formatValue} />
+        <Tooltip content={<CustomTooltip valueLabel={t('current')} />} />
         <Legend />
-        <Bar dataKey="current" fill="#8884d8"/>
+        <Bar dataKey="current" name={t('current')} fill="#8884d8" />
       </BarChart>
     </ResponsiveContainer>
   );
 }
 
 export function BarColumnReservesAllCountries({ data }) {
+  const { locale, t } = useApplicationContext();
+  const formatValue = (value) => formatNumber(value, locale);
+
   return (
     <ResponsiveContainer width="100%" height={400}>
-      <BarChart
-        data={normalizeBarColumnReservesAllCountries(data)}
-        margin={{
-          top: 5,
-          right: 30,
-          left: 20,
-          bottom: 5,
-        }}
-      >
+      <BarChart data={normalizeReservesData(data)} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
         <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="countryCode" />
-        <YAxis />
-        <Tooltip content={<CustomTooltip />} />
+        <XAxis dataKey="countryCode" tickFormatter={(value) => getCountryName({ code: value }, locale)} />
+        <YAxis tickFormatter={formatValue} />
+        <Tooltip content={<CustomTooltip valueLabel={t('amount')} />} />
         <Legend />
-        <Bar dataKey="amount" fill="#8884d8"/>
+        <Bar dataKey="amount" name={t('amount')} fill="#8884d8" />
       </BarChart>
     </ResponsiveContainer>
   );
 }
 
-function normalizeBarColumnReservesAllCountries(data) {
+function normalizeReservesData(data) {
   if (!Array.isArray(data)) {
-    console.error('Invalid data passed to normalizeBarColumnReservesAllCountries:', data);
+    console.error('Invalid data passed to normalizeReservesData:', data);
     return [];
   }
-  return data.map(item => ({
+  return data.map((item) => ({
     ...item,
     amount: normalizeNumber(item.amount),
   }));
 }
 
-function normalizeBarColumnGrossDataAllCountries(data) {
+function normalizeGrossData(data) {
   if (!Array.isArray(data)) {
-    console.error('Invalid data passed to normalizeBarColumnGrossDataAllCountries:', data);
+    console.error('Invalid data passed to normalizeGrossData:', data);
     return [];
   }
-  return data.map(item => ({
+  return data.map((item) => ({
     ...item,
     current: normalizeNumber(item.current),
   }));
 }
 
-const normalizeNumber = ( number ) => {
-  return number !== undefined ? number / NORMILIZE_NUMBER : undefined;
-};
+function normalizeNumber(value) {
+  return value === null || value === undefined ? value : value / NORMALIZE_NUMBER;
+}
 
-function CustomTooltip({ active, payload, label }) {
-  const { countries } = useApplicationContext();
-  if (active && payload && payload.length) {
-    const countryCode = payload[0].payload.countryCode;
-    const country = countries.find(c => c.code === countryCode);
-    const countryName = country ? country.name : countryCode;
-    return (
-      <div style={{ background: '#fff', border: '1px solid #ccc', padding: 8 }}>
-        <div><strong>Country </strong> {countryName}</div>
-        <div><strong>Amount </strong> {payload[0].value}</div>
-      </div>
-    );
+function CustomTooltip({ active, payload, valueLabel }) {
+  const { countries, locale, t } = useApplicationContext();
+
+  if (!active || !payload?.length || !payload[0]?.payload) {
+    return null;
   }
-  return null;
+
+  const item = payload[0].payload;
+  const country = countries.find((countryItem) => countryItem.code === item.countryCode);
+  const countryName = getCountryName(country || { code: item.countryCode, name: item.countryCode }, locale);
+
+  return (
+    <div style={{ background: '#fff', border: '1px solid #ccc', padding: 8 }}>
+      <div><strong>{t('country')}: </strong>{countryName}</div>
+      <div><strong>{valueLabel}: </strong>{formatNumber(payload[0].value, locale)}</div>
+    </div>
+  );
 }
