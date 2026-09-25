@@ -8,8 +8,7 @@ const debtGrossApi ='api/wcm/v0/debt/debt-gross/country';
 const debtGrossPercentageApi ='api/wcm/v0/debt/year';
 const moneySupplyApi = 'api/wcm/v0/money-supply/country';
 const countryApi = 'api/wcm/v0/country/all';
-const worldBankApiUrl = 'https://api.worldbank.org/v2';
-const populationIndicator = 'SP.POP.TOTL';
+const populationApi = 'api/wcm/v0/population/country';
 
 export const fetchDataReserves = async ({ selectedCountry }) => {
   return fetchData(`${baseUrl}/${reservesApi}/${selectedCountry}`);
@@ -40,8 +39,7 @@ export const fetchDataDebtGrossPercentageAllCountries = async () => {
 };
 
 export const fetchDataPopulation = async ({ selectedCountry }) => {
-  const countryCode = encodeURIComponent(selectedCountry);
-  return fetchWorldBankData(`${worldBankApiUrl}/country/${countryCode}/indicator/${populationIndicator}?format=json&per_page=1000`);
+  return fetchData(`${baseUrl}/${populationApi}/${selectedCountry}`);
 };
 
 export const fetchDataMoneySupply = async ({ selectedCountry }) => {
@@ -50,20 +48,6 @@ export const fetchDataMoneySupply = async ({ selectedCountry }) => {
 
 export const fetchDataCountries = async () => {
   return fetchData(`${baseUrl}/${countryApi}`);
-};
-
-const fetchWorldBankData = async (url) => {
-  try {
-    const res = await fetch(url);
-    if (!res.ok) {
-      throw new Error(`Error fetching data: ${res.statusText}`);
-    }
-    const data = await res.json();
-    return Array.isArray(data?.[1]) ? data[1] : [];
-  } catch (error) {
-    console.error('Error fetching World Bank data:', error);
-    return [];
-  }
 };
 
 const fetchData = async (url) => {
