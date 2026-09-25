@@ -1,4 +1,10 @@
-import { fetchDataPopulation } from './RestService';
+import {
+  adminLogin,
+  fetchAdminVisits,
+  fetchDataPopulation,
+  registerVisit,
+  submitFeedback,
+} from './RestService';
 
 describe('fetchDataPopulation', () => {
   const originalFetch = globalThis.fetch;
@@ -26,6 +32,7 @@ describe('fetchDataPopulation', () => {
     await expect(fetchDataPopulation({ selectedCountry: 'RUS' })).resolves.toEqual(records);
     expect(globalThis.fetch).toHaveBeenCalledWith(
       'http://localhost:8080/api/wcm/v0/population/country/RUS',
+      expect.objectContaining({ method: 'GET' }),
     );
   });
 
@@ -63,5 +70,86 @@ describe('fetchDataPopulation', () => {
 
     await expect(fetchDataPopulation({ selectedCountry: 'RUS' })).resolves.toEqual([]);
     expect(consoleError).toHaveBeenCalled();
+  });
+});
+
+describe('site API', () => {
+  const originalFetch = globalThis.fetch;
+
+  afterEach(() => {
+    globalThis.fetch = originalFetch;
+  });
+
+  test('registers a visit with the frontend client header', async () => {
+    globalThis.fetch = jest.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: jest.fn().mockResolvedValue({ count: 1 }),
+    });
+
+    await expect(registerVisit()).resolves.toEqual({ count: 1 });
+    expect(globalThis.fetch).toHaveBeenCalledWith(
+      'http://localhost:8080/api/wcm/v0/visits',
+      expect.objectContaining({
+        method: 'POST',
+        headers: expect.objectContaining({ 'X-WCM-Client': expect.any(String) }),
+      }),
+    );
+  });
+
+  test('submits feedback', async () => {
+    globalThis.fetch = jest.fn().mockResolvedValue({
+      ok: true,
+      status: 201,
+      json: jest.fn().mockResolvedValue({ id: 1, email: 'user@example.com' }),
+    });
+
+    await expect(
+      submitFeedback({ email: 'user@example.com', message: 'Add charts' }),
+    ).resolves.toEqual({ id: 1, email: 'user@example.com' });
+    expect(globalThis.fetch).toHaveBeenCalledWith(
+      'http://localhost:8080/api/wcm/v0/feedback',
+      expect.objectContaining({
+        method: 'POST',
+        body: JSON.stringify({ email: 'user@example.com', message: 'Add charts' }),
+      }),
+    );
+  });
+
+  test('logs in as admin', async () => {
+    globalThis.fetch = jest.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: jest.fn().mockResolvedValue({ token: 'admin-token' }),
+    });
+
+    await expect(adminLogin({ login: 'admin', password: 'secret' })).resolves.toEqual({
+      token: 'admin-token',
+    });
+  });
+
+  test('throws an error with status for unauthorized admin request', async () => {
+    globalThis.fetch = jest.fn().mockResolvedValue({
+      ok: false,
+      status: 401,
+    });
+
+    await expect(fetchAdminVisits('expired-token')).rejects.toMatchObject({ status: 401 });
+  });
+
+  test('sends bearer token for admin requests', async () => {
+    globalThis.fetch = jest.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: jest.fn().mockResolvedValue({ count: 5 }),
+    });
+
+    await expect(fetchAdminVisits('admin-token')).resolves.toEqual({ count: 5 });
+    expect(globalThis.fetch).toHaveBeenCalledWith(
+      'http://localhost:8080/api/wcm/v0/admin/visits',
+      expect.objectContaining({
+        headers: expect.objectContaining({ Authorization: 'Bearer admin-token' }),
+      }),
+    );
   });
 });

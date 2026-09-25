@@ -4,8 +4,10 @@ services:
       context: .
       args:
         REACT_APP_API_URL: ${REACT_APP_API_URL:-/api}
+        REACT_APP_CLIENT_KEY: ${REACT_APP_CLIENT_KEY:-wcm-frontend}
     restart: unless-stopped
     ports:
+      - "80:80"
       - "8097:80"
     networks:
       - wcm-net

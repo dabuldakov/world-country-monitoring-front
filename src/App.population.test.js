@@ -7,6 +7,8 @@ import { fetchDataCountries, fetchDataPopulation } from './rest/RestService';
 jest.mock('./rest/RestService', () => ({
   fetchDataCountries: jest.fn(),
   fetchDataPopulation: jest.fn(),
+  registerVisit: jest.fn(() => Promise.resolve({ count: 1 })),
+  submitFeedback: jest.fn(),
 }));
 
 jest.mock('./tabs/Tabs', () => ({
