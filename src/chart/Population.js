@@ -2,6 +2,7 @@ import {
   Bar,
   BarChart,
   CartesianGrid,
+  Cell,
   Legend,
   Line,
   LineChart,
@@ -16,6 +17,8 @@ import { useApplicationContext } from '../provider/CountriesProvider';
 
 const NORMALIZE_NUMBER = 1000000;
 const ACTIVE_BAR_COLOR = '#ef4444';
+const SELECTED_BAR_COLOR = '#2e7d32';
+const DEFAULT_BAR_COLOR = '#8884d8';
 
 function formatYear(value) {
   return value ? String(value) : '';
@@ -45,8 +48,9 @@ export function PopulationSimpleLine({ data }) {
 }
 
 export function BarColumnPopulationAllCountries({ data }) {
-  const { locale, setSelectedCountry, t } = useApplicationContext();
+  const { locale, selectedCountry, setSelectedCountry, t } = useApplicationContext();
   const formatValue = (value) => formatNumber(value, locale);
+  const chartData = normalizePopulationAllCountries(data);
 
   const handleCountryClick = (entry) => {
     if (entry?.countryCode) {
@@ -64,7 +68,7 @@ export function BarColumnPopulationAllCountries({ data }) {
   return (
     <ResponsiveContainer width="100%" height={400}>
       <BarChart
-        data={normalizePopulationAllCountries(data)}
+        data={chartData}
         margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
         onClick={handleChartClick}
       >
@@ -76,10 +80,17 @@ export function BarColumnPopulationAllCountries({ data }) {
         <Bar
           dataKey="population"
           name={t('population')}
-          fill="#8884d8"
+          fill={DEFAULT_BAR_COLOR}
           activeBar={{ fill: ACTIVE_BAR_COLOR }}
           onClick={handleCountryClick}
-        />
+        >
+          {chartData.map((entry, index) => (
+            <Cell
+              key={`${entry?.countryCode ?? index}-${index}`}
+              fill={entry?.countryCode === selectedCountry ? SELECTED_BAR_COLOR : DEFAULT_BAR_COLOR}
+            />
+          ))}
+        </Bar>
       </BarChart>
     </ResponsiveContainer>
   );
