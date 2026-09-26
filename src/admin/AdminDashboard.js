@@ -4,17 +4,34 @@ import { Alert, Button, CircularProgress, Paper, Table, TableBody, TableCell, Ta
 import {
   fetchAdminFeedback,
   fetchAdminVisits,
+  fetchFeatureStatuses,
   fetchLastRefill,
+  triggerFeatureRefillAll,
+  triggerFeatureRefillCountry,
   triggerRefillAll,
   triggerRefillCountry,
 } from '../rest/RestService';
 import { useApplicationContext } from '../provider/CountriesProvider';
+
+const FEATURES = ['gdp', 'debt', 'reserves', 'population'];
+
+const FEATURE_LABELS = {
+  gdp: 'featureGdp',
+  debt: 'featureDebt',
+  reserves: 'featureReserves',
+  population: 'featurePopulation',
+};
+
+function formatUpdatedAt(milliseconds) {
+  return milliseconds ? new Date(milliseconds).toLocaleString() : '—';
+}
 
 export function AdminDashboard({ token, onLogout }) {
   const { t } = useApplicationContext();
   const [feedback, setFeedback] = useState([]);
   const [visits, setVisits] = useState(0);
   const [lastRefill, setLastRefill] = useState(null);
+  const [featureStatuses, setFeatureStatuses] = useState([]);
   const [countryCode, setCountryCode] = useState('RUS');
   const [isLoading, setIsLoading] = useState(true);
   const [isRefilling, setIsRefilling] = useState(false);
@@ -36,14 +53,16 @@ export function AdminDashboard({ token, onLogout }) {
     setError('');
 
     try {
-      const [feedbackResult, visitsResult, refillResult] = await Promise.all([
+      const [feedbackResult, visitsResult, refillResult, statusesResult] = await Promise.all([
         fetchAdminFeedback(token),
         fetchAdminVisits(token),
         fetchLastRefill(token),
+        fetchFeatureStatuses(token),
       ]);
       setFeedback(Array.isArray(feedbackResult) ? feedbackResult : []);
       setVisits(visitsResult?.count ?? 0);
       setLastRefill(refillResult);
+      setFeatureStatuses(Array.isArray(statusesResult) ? statusesResult : []);
     } catch (requestError) {
       handleError(requestError);
     } finally {
@@ -69,6 +88,9 @@ export function AdminDashboard({ token, onLogout }) {
       setIsRefilling(false);
     }
   };
+
+  const statusByFeature = (feature) =>
+    featureStatuses.find((item) => item.feature === feature);
 
   return (
     <div>
@@ -104,6 +126,50 @@ export function AdminDashboard({ token, onLogout }) {
             {t('refillCountry')}
           </Button>
         </div>
+      </Paper>
+
+      <Paper sx={{ p: 2, mb: 2 }}>
+        <h4>{t('updateByFeature')}</h4>
+        <Table size="small">
+          <TableHead>
+            <TableRow>
+              <TableCell>{t('operation')}</TableCell>
+              <TableCell>{t('lastUpdated')}</TableCell>
+              <TableCell>{t('status')}</TableCell>
+              <TableCell align="right">{t('refresh')}</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {FEATURES.map((feature) => {
+              const status = statusByFeature(feature);
+              return (
+                <TableRow key={feature}>
+                  <TableCell>{t(FEATURE_LABELS[feature])}</TableCell>
+                  <TableCell>{formatUpdatedAt(status?.lastUpdatedAtEpochMillis)}</TableCell>
+                  <TableCell>{status?.status || '—'}</TableCell>
+                  <TableCell align="right">
+                    <Button
+                      size="small"
+                      disabled={isRefilling}
+                      onClick={() => runRefill(() => triggerFeatureRefillAll(token, feature))}
+                    >
+                      {t('refreshAll')}
+                    </Button>
+                    <Button
+                      size="small"
+                      disabled={isRefilling}
+                      onClick={() =>
+                        runRefill(() => triggerFeatureRefillCountry(token, feature, countryCode))
+                      }
+                    >
+                      {t('refreshCountry')}
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              );
+            })}
+          </TableBody>
+        </Table>
       </Paper>
 
       <Paper sx={{ p: 2, mb: 2 }}>

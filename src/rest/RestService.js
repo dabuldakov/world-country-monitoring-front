@@ -93,6 +93,21 @@ export const triggerRefillCountry = async (token, countryCode) => {
   return request(`${baseUrl}/${adminApi}/refill/country/${countryCode}`, { method: 'POST', token });
 };
 
+export const fetchFeatureStatuses = async (token) => {
+  return request(`${baseUrl}/${adminApi}/refill/status`, { token });
+};
+
+export const triggerFeatureRefillAll = async (token, feature) => {
+  return request(`${baseUrl}/${adminApi}/refill/${feature}/all`, { method: 'POST', token });
+};
+
+export const triggerFeatureRefillCountry = async (token, feature, countryCode) => {
+  return request(`${baseUrl}/${adminApi}/refill/${feature}/country/${countryCode}`, {
+    method: 'POST',
+    token,
+  });
+};
+
 const request = async (url, options = {}) => {
   const headers = { 'X-WCM-Client': clientKey };
 

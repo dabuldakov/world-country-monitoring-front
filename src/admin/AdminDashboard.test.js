@@ -5,7 +5,9 @@ import { AdminDashboard } from './AdminDashboard';
 import {
   fetchAdminFeedback,
   fetchAdminVisits,
+  fetchFeatureStatuses,
   fetchLastRefill,
+  triggerFeatureRefillCountry,
   triggerRefillAll,
 } from '../rest/RestService';
 import { useApplicationContext } from '../provider/CountriesProvider';
@@ -13,7 +15,10 @@ import { useApplicationContext } from '../provider/CountriesProvider';
 jest.mock('../rest/RestService', () => ({
   fetchAdminFeedback: jest.fn(),
   fetchAdminVisits: jest.fn(),
+  fetchFeatureStatuses: jest.fn(),
   fetchLastRefill: jest.fn(),
+  triggerFeatureRefillAll: jest.fn(),
+  triggerFeatureRefillCountry: jest.fn(),
   triggerRefillAll: jest.fn(),
   triggerRefillCountry: jest.fn(),
 }));
@@ -30,6 +35,14 @@ describe('AdminDashboard', () => {
       { id: 1, email: 'user@example.com', message: 'Add more charts', createdAt: '2026-01-01T00:00:00' },
     ]);
     fetchAdminVisits.mockResolvedValue({ count: 7 });
+    fetchFeatureStatuses.mockResolvedValue([
+      {
+        feature: 'population',
+        lastUpdatedAtEpochMillis: 1700000000000,
+        status: 'SUCCESS',
+        processedCount: 1,
+      },
+    ]);
     fetchLastRefill.mockResolvedValue({
       operation: 'RUS',
       status: 'SUCCESS',
@@ -51,7 +64,27 @@ describe('AdminDashboard', () => {
 
     expect(await screen.findByText('user@example.com')).toBeInTheDocument();
     expect(screen.getByText(/7/)).toBeInTheDocument();
-    expect(screen.getByText(/SUCCESS/)).toBeInTheDocument();
+    expect(screen.getAllByText(/SUCCESS/).length).toBeGreaterThan(0);
+    expect(screen.getByText('featurePopulation')).toBeInTheDocument();
+  });
+
+  test('triggers refill for one feature and one country', async () => {
+    triggerFeatureRefillCountry.mockResolvedValue({
+      operation: 'population:RUS',
+      status: 'SUCCESS',
+      processedCount: 1,
+      startedAt: '2026-01-01T00:00:00',
+      finishedAt: '2026-01-01T00:00:01',
+    });
+
+    render(<AdminDashboard token="admin-token" onLogout={jest.fn()} />);
+    await screen.findByText('user@example.com');
+
+    userEvent.click(screen.getAllByRole('button', { name: 'refreshCountry' })[3]);
+
+    await waitFor(() =>
+      expect(triggerFeatureRefillCountry).toHaveBeenCalledWith('admin-token', 'population', 'RUS'),
+    );
   });
 
   test('runs full refill from the dashboard', async () => {

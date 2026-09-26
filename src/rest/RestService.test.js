@@ -2,8 +2,10 @@ import {
   adminLogin,
   fetchAdminVisits,
   fetchDataPopulation,
+  fetchFeatureStatuses,
   registerVisit,
   submitFeedback,
+  triggerFeatureRefillCountry,
 } from './RestService';
 
 describe('fetchDataPopulation', () => {
@@ -150,6 +152,39 @@ describe('site API', () => {
       expect.objectContaining({
         headers: expect.objectContaining({ Authorization: 'Bearer admin-token' }),
       }),
+    );
+  });
+
+  test('loads per-feature refresh statuses', async () => {
+    const statuses = [{ feature: 'population', status: 'SUCCESS' }];
+    globalThis.fetch = jest.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: jest.fn().mockResolvedValue(statuses),
+    });
+
+    await expect(fetchFeatureStatuses('admin-token')).resolves.toEqual(statuses);
+    expect(globalThis.fetch).toHaveBeenCalledWith(
+      'http://localhost:8080/api/wcm/v0/admin/refill/status',
+      expect.objectContaining({
+        headers: expect.objectContaining({ Authorization: 'Bearer admin-token' }),
+      }),
+    );
+  });
+
+  test('triggers refill for one feature and country', async () => {
+    globalThis.fetch = jest.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: jest.fn().mockResolvedValue({ status: 'SUCCESS' }),
+    });
+
+    await expect(
+      triggerFeatureRefillCountry('admin-token', 'population', 'RUS'),
+    ).resolves.toEqual({ status: 'SUCCESS' });
+    expect(globalThis.fetch).toHaveBeenCalledWith(
+      'http://localhost:8080/api/wcm/v0/admin/refill/population/country/RUS',
+      expect.objectContaining({ method: 'POST' }),
     );
   });
 });
