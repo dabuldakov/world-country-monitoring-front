@@ -43,7 +43,7 @@ export function BarColumnDebtGrossAllCountries({ data }) {
   return (
     <ResponsiveContainer width="100%" height={400}>
       <BarChart
-        data={chartData}
+        data={sortDescending(chartData, 'percentageToGDP')}
         margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
         onClick={onChartClick}
       >
@@ -132,10 +132,13 @@ function normalizeReservesData(data) {
     console.error('Invalid data passed to normalizeReservesData:', data);
     return [];
   }
-  return data.map((item) => ({
-    ...item,
-    amount: normalizeNumber(item.amount),
-  }));
+  return sortDescending(
+    data.map((item) => ({
+      ...item,
+      amount: normalizeNumber(item.amount),
+    })),
+    'amount',
+  );
 }
 
 function normalizeDebtAmountData(data) {
@@ -143,10 +146,13 @@ function normalizeDebtAmountData(data) {
     console.error('Invalid data passed to normalizeDebtAmountData:', data);
     return [];
   }
-  return data.map((item) => ({
-    ...item,
-    foreign: normalizeNumber(item.foreign),
-  }));
+  return sortDescending(
+    data.map((item) => ({
+      ...item,
+      foreign: normalizeNumber(item.foreign),
+    })),
+    'foreign',
+  );
 }
 
 function normalizeGrossData(data) {
@@ -154,10 +160,21 @@ function normalizeGrossData(data) {
     console.error('Invalid data passed to normalizeGrossData:', data);
     return [];
   }
-  return data.map((item) => ({
-    ...item,
-    current: normalizeNumber(item.current),
-  }));
+  return sortDescending(
+    data.map((item) => ({
+      ...item,
+      current: normalizeNumber(item.current),
+    })),
+    'current',
+  );
+}
+
+function sortDescending(data, key) {
+  return [...data].sort((left, right) => {
+    const leftValue = left?.[key] ?? 0;
+    const rightValue = right?.[key] ?? 0;
+    return rightValue - leftValue;
+  });
 }
 
 function normalizeNumber(value) {

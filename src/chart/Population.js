@@ -101,7 +101,8 @@ export function normalizePopulationAllCountries(data) {
         population: normalizeNumber(item.population ?? item.value),
       };
     })
-    .filter((item) => item && item.population !== null);
+    .filter((item) => item && item.population !== null)
+    .sort((left, right) => right.population - left.population);
 }
 
 function PopulationTooltip({ active, payload, valueLabel }) {
