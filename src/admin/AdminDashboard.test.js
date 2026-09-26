@@ -6,6 +6,7 @@ import {
   enqueueRefreshJob,
   fetchAdminFeedback,
   fetchAdminVisits,
+  fetchCountryStatuses,
   fetchFeatureStatuses,
   fetchLastRefill,
   triggerRefillAll,
@@ -16,6 +17,7 @@ jest.mock('../rest/RestService', () => ({
   enqueueRefreshJob: jest.fn(),
   fetchAdminFeedback: jest.fn(),
   fetchAdminVisits: jest.fn(),
+  fetchCountryStatuses: jest.fn(),
   fetchFeatureStatuses: jest.fn(),
   fetchLastRefill: jest.fn(),
   fetchRefreshJob: jest.fn(),
@@ -46,6 +48,14 @@ describe('AdminDashboard', () => {
         processedCount: 1,
       },
     ]);
+    fetchCountryStatuses.mockResolvedValue([
+      {
+        feature: 'population',
+        countryCode: 'RUS',
+        lastUpdatedAtEpochMillis: 1700000000000,
+        status: 'SUCCESS',
+      },
+    ]);
     fetchLastRefill.mockResolvedValue({
       operation: 'RUS',
       status: 'SUCCESS',
@@ -68,7 +78,8 @@ describe('AdminDashboard', () => {
     expect(await screen.findByText('user@example.com')).toBeInTheDocument();
     expect(screen.getByText(/7/)).toBeInTheDocument();
     expect(screen.getAllByText(/SUCCESS/).length).toBeGreaterThan(0);
-    expect(screen.getByText('featurePopulation')).toBeInTheDocument();
+    expect(screen.getAllByText('featurePopulation').length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/Russia|RUS/).length).toBeGreaterThan(0);
   });
 
   test('queues refresh job for one feature and one country', async () => {

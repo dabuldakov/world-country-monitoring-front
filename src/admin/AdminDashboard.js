@@ -1,10 +1,11 @@
-import { useCallback, useEffect, useState } from 'react';
-import { Alert, Button, CircularProgress, LinearProgress, Paper, Table, TableBody, TableCell, TableHead, TableRow, TextField } from '@mui/material';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Alert, Button, CircularProgress, LinearProgress, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from '@mui/material';
 
 import {
   enqueueRefreshJob,
   fetchAdminFeedback,
   fetchAdminVisits,
+  fetchCountryStatuses,
   fetchFeatureStatuses,
   fetchLastRefill,
   fetchRefreshJob,
@@ -12,6 +13,7 @@ import {
   triggerRefillAll,
   triggerRefillCountry,
 } from '../rest/RestService';
+import { getCountryName } from '../i18n/locales';
 import { useApplicationContext } from '../provider/CountriesProvider';
 
 const FEATURES = ['gdp', 'debt', 'reserves', 'population'];
@@ -30,11 +32,12 @@ function formatUpdatedAt(milliseconds) {
 }
 
 export function AdminDashboard({ token, onLogout }) {
-  const { t } = useApplicationContext();
+  const { t, countries = [], locale = 'en' } = useApplicationContext();
   const [feedback, setFeedback] = useState([]);
   const [visits, setVisits] = useState(0);
   const [lastRefill, setLastRefill] = useState(null);
   const [featureStatuses, setFeatureStatuses] = useState([]);
+  const [countryStatuses, setCountryStatuses] = useState([]);
   const [activeJob, setActiveJob] = useState(null);
   const [countryCode, setCountryCode] = useState('RUS');
   const [isLoading, setIsLoading] = useState(true);
@@ -57,16 +60,24 @@ export function AdminDashboard({ token, onLogout }) {
     setError('');
 
     try {
-      const [feedbackResult, visitsResult, refillResult, statusesResult] = await Promise.all([
+      const [
+        feedbackResult,
+        visitsResult,
+        refillResult,
+        statusesResult,
+        countryStatusesResult,
+      ] = await Promise.all([
         fetchAdminFeedback(token),
         fetchAdminVisits(token),
         fetchLastRefill(token),
         fetchFeatureStatuses(token),
+        fetchCountryStatuses(token),
       ]);
       setFeedback(Array.isArray(feedbackResult) ? feedbackResult : []);
       setVisits(visitsResult?.count ?? 0);
       setLastRefill(refillResult);
       setFeatureStatuses(Array.isArray(statusesResult) ? statusesResult : []);
+      setCountryStatuses(Array.isArray(countryStatusesResult) ? countryStatusesResult : []);
     } catch (requestError) {
       handleError(requestError);
     } finally {
@@ -153,9 +164,37 @@ export function AdminDashboard({ token, onLogout }) {
   const statusByFeature = (feature) =>
     featureStatuses.find((item) => item.feature === feature);
 
+  const countryStatusMap = useMemo(
+    () => new Map(countryStatuses.map((item) => [`${item.feature}:${item.countryCode}`, item])),
+    [countryStatuses],
+  );
+
+  const sortedCountries = useMemo(() => {
+    const countryByCode = new Map((countries || []).map((country) => [country.code, country]));
+    const codes = countryStatuses.length > 0
+      ? Array.from(new Set(countryStatuses.map((item) => item.countryCode)))
+      : (countries || []).map((country) => country.code);
+
+    return codes
+      .map((code) => countryByCode.get(code) || { code, name: code })
+      .sort((left, right) =>
+        getCountryName(left, locale).localeCompare(getCountryName(right, locale)),
+      );
+  }, [countries, countryStatuses, locale]);
+
   const progress = activeJob?.total
     ? Math.round((activeJob.processed * 100) / activeJob.total)
     : 0;
+
+  const statusColor = (status) => {
+    if (status === 'SUCCESS') {
+      return '#2e7d32';
+    }
+    if (status === 'FAILED') {
+      return '#c62828';
+    }
+    return '#9e9e9e';
+  };
 
   return (
     <div>
@@ -250,6 +289,48 @@ export function AdminDashboard({ token, onLogout }) {
             })}
           </TableBody>
         </Table>
+      </Paper>
+
+      <Paper sx={{ p: 2, mb: 2 }}>
+        <h4>{t('updateByCountry')}</h4>
+        <TableContainer sx={{ maxHeight: 520 }}>
+          <Table size="small" stickyHeader>
+            <TableHead>
+              <TableRow>
+                <TableCell>{t('country')}</TableCell>
+                {FEATURES.map((feature) => (
+                  <TableCell key={feature}>{t(FEATURE_LABELS[feature])}</TableCell>
+                ))}
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {sortedCountries.map((country) => (
+                <TableRow key={country.code}>
+                  <TableCell>{getCountryName(country, locale)}</TableCell>
+                  {FEATURES.map((feature) => {
+                    const status = countryStatusMap.get(`${feature}:${country.code}`);
+                    return (
+                      <TableCell key={feature}>
+                        {status ? (
+                          <div>
+                            <div style={{ color: statusColor(status.status), fontWeight: 500 }}>
+                              {status.status}
+                            </div>
+                            <div style={{ color: '#7a7a7a', fontSize: 12 }}>
+                              {formatUpdatedAt(status.lastUpdatedAtEpochMillis)}
+                            </div>
+                          </div>
+                        ) : (
+                          <span style={{ color: '#9e9e9e' }}>—</span>
+                        )}
+                      </TableCell>
+                    );
+                  })}
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
       </Paper>
 
       <Paper sx={{ p: 2, mb: 2 }}>

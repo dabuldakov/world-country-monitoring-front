@@ -125,7 +125,8 @@ export const retryRefreshJob = async (token, jobId) => {
 };
 
 export const fetchCountryStatuses = async (token, feature) => {
-  return request(`${baseUrl}/${adminApi}/refill/country-status?feature=${feature}`, { token });
+  const query = feature ? `?feature=${feature}` : '';
+  return request(`${baseUrl}/${adminApi}/refill/country-status${query}`, { token });
 };
 
 const request = async (url, options = {}) => {

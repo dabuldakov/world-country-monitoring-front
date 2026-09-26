@@ -287,6 +287,7 @@ const translations = {
     refreshJob: 'Refresh job',
     failedCountries: 'Failed countries',
     retryFailed: 'Retry failed',
+    updateByCountry: 'Updates by country',
   },
   zh: {
     appTitle: '国家监测',
@@ -546,6 +547,7 @@ const translations = {
     refreshJob: 'Задание обновления',
     failedCountries: 'Стран с ошибкой',
     retryFailed: 'Повторить упавшие',
+    updateByCountry: 'Обновления по странам',
   },
   ur: {
     appTitle: 'ممالک کی نگرانی',
