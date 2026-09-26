@@ -18,28 +18,41 @@ const ACTIVE_BAR_COLOR = '#ef4444';
 function useCountryBarClick() {
   const { setSelectedCountry } = useApplicationContext();
 
-  return (entry) => {
+  const onBarClick = (entry) => {
     if (entry?.countryCode) {
       setSelectedCountry(entry.countryCode);
     }
   };
+
+  const onChartClick = (state) => {
+    const code = state?.activeLabel ?? state?.activePayload?.[0]?.payload?.countryCode;
+    if (code) {
+      setSelectedCountry(code);
+    }
+  };
+
+  return { onBarClick, onChartClick };
 }
 
 export function BarColumnDebtGrossAllCountries({ data }) {
   const { locale, t } = useApplicationContext();
-  const handleCountryClick = useCountryBarClick();
+  const { onBarClick, onChartClick } = useCountryBarClick();
   const formatValue = (value) => formatNumber(value, locale);
   const chartData = Array.isArray(data) ? data : [];
 
   return (
     <ResponsiveContainer width="100%" height={400}>
-      <BarChart data={chartData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+      <BarChart
+        data={chartData}
+        margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+        onClick={onChartClick}
+      >
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="countryCode" tickFormatter={(value) => getCountryName({ code: value }, locale)} />
         <YAxis tickFormatter={formatValue} />
         <Tooltip content={<CustomTooltip valueLabel={t('debtToGdp')} />} />
         <Legend />
-        <Bar dataKey="percentageToGDP" name={t('debtToGdp')} fill="#8884d8" activeBar={{ fill: ACTIVE_BAR_COLOR }} onClick={handleCountryClick} />
+        <Bar dataKey="percentageToGDP" name={t('debtToGdp')} fill="#8884d8" activeBar={{ fill: ACTIVE_BAR_COLOR }} onClick={onBarClick} />
       </BarChart>
     </ResponsiveContainer>
   );
@@ -47,18 +60,22 @@ export function BarColumnDebtGrossAllCountries({ data }) {
 
 export function BarColumnGrossDataAllCountries({ data }) {
   const { locale, t } = useApplicationContext();
-  const handleCountryClick = useCountryBarClick();
+  const { onBarClick, onChartClick } = useCountryBarClick();
   const formatValue = (value) => formatNumber(value, locale);
 
   return (
     <ResponsiveContainer width="100%" height={400}>
-      <BarChart data={normalizeGrossData(data)} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+      <BarChart
+        data={normalizeGrossData(data)}
+        margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+        onClick={onChartClick}
+      >
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="countryCode" tickFormatter={(value) => getCountryName({ code: value }, locale)} />
         <YAxis tickFormatter={formatValue} />
         <Tooltip content={<CustomTooltip valueLabel={t('current')} />} />
         <Legend />
-        <Bar dataKey="current" name={t('current')} fill="#8884d8" activeBar={{ fill: ACTIVE_BAR_COLOR }} onClick={handleCountryClick} />
+        <Bar dataKey="current" name={t('current')} fill="#8884d8" activeBar={{ fill: ACTIVE_BAR_COLOR }} onClick={onBarClick} />
       </BarChart>
     </ResponsiveContainer>
   );
@@ -66,18 +83,22 @@ export function BarColumnGrossDataAllCountries({ data }) {
 
 export function BarColumnReservesAllCountries({ data }) {
   const { locale, t } = useApplicationContext();
-  const handleCountryClick = useCountryBarClick();
+  const { onBarClick, onChartClick } = useCountryBarClick();
   const formatValue = (value) => formatNumber(value, locale);
 
   return (
     <ResponsiveContainer width="100%" height={400}>
-      <BarChart data={normalizeReservesData(data)} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+      <BarChart
+        data={normalizeReservesData(data)}
+        margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+        onClick={onChartClick}
+      >
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="countryCode" tickFormatter={(value) => getCountryName({ code: value }, locale)} />
         <YAxis tickFormatter={formatValue} />
         <Tooltip content={<CustomTooltip valueLabel={t('amount')} />} />
         <Legend />
-        <Bar dataKey="amount" name={t('amount')} fill="#8884d8" activeBar={{ fill: ACTIVE_BAR_COLOR }} onClick={handleCountryClick} />
+        <Bar dataKey="amount" name={t('amount')} fill="#8884d8" activeBar={{ fill: ACTIVE_BAR_COLOR }} onClick={onBarClick} />
       </BarChart>
     </ResponsiveContainer>
   );

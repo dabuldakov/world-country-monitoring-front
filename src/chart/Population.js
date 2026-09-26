@@ -54,11 +54,19 @@ export function BarColumnPopulationAllCountries({ data }) {
     }
   };
 
+  const handleChartClick = (state) => {
+    const code = state?.activeLabel ?? state?.activePayload?.[0]?.payload?.countryCode;
+    if (code) {
+      setSelectedCountry(code);
+    }
+  };
+
   return (
     <ResponsiveContainer width="100%" height={400}>
       <BarChart
         data={normalizePopulationAllCountries(data)}
         margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+        onClick={handleChartClick}
       >
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="countryCode" tickFormatter={(value) => getCountryName({ code: value }, locale)} />
