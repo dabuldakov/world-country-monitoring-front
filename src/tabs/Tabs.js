@@ -4,12 +4,14 @@ import { Box, Tab, Tabs } from '@mui/material';
 import {
   BarColumnDebtAmountAllCountries,
   BarColumnDebtGrossAllCountries,
+  BarColumnGdpPerCapitaAllCountries,
   BarColumnGrossDataAllCountries,
   BarColumnReservesAllCountries,
 } from '../chart/BarColumn';
 import {
   SimpleLineDept,
   SimpleLineDeptGross,
+  SimpleLineGdpPerCapita,
   SimpleLineGross,
   SimpleLineMonetaryReserves,
   SimpleLineMoneySupply,
@@ -20,6 +22,8 @@ import {
   fetchDataDebtGrossPercentageAllCountries,
   fetchDataDept,
   fetchDataDeptGross,
+  fetchDataGdpPerCapita,
+  fetchDataGdpPerCapitaAllCountries,
   fetchDataGrossDomestic,
   fetchDataGrossDomesticAllCountries,
   fetchDataMoneySupply,
@@ -33,6 +37,8 @@ export function GetMainTabs() {
   const [reserveAllCountriesData, setReserveAllCountriesData] = useState([]);
   const [grossData, setGrossData] = useState([]);
   const [grossDataAllCountries, setGrossDataAllCountries] = useState([]);
+  const [gdpPerCapitaData, setGdpPerCapitaData] = useState([]);
+  const [gdpPerCapitaAllCountriesData, setGdpPerCapitaAllCountriesData] = useState([]);
   const [debtData, setDebtData] = useState([]);
   const [debtAmountAllCountriesData, setDebtAmountAllCountriesData] = useState([]);
   const [debtGrossData, setDebtGrossData] = useState([]);
@@ -43,11 +49,13 @@ export function GetMainTabs() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [reserves, gross, grossAllCountries, reservesAllCountries, debt, debtAmountAllCountries, debtGross, debtGrossPercentage, moneySupply] = await Promise.all([
+        const [reserves, gross, grossAllCountries, reservesAllCountries, gdpPerCapita, gdpPerCapitaAllCountries, debt, debtAmountAllCountries, debtGross, debtGrossPercentage, moneySupply] = await Promise.all([
           fetchDataReserves({ selectedCountry }),
           fetchDataGrossDomestic({ selectedCountry }),
           fetchDataGrossDomesticAllCountries(),
           fetchDataReservesAllCountries(),
+          fetchDataGdpPerCapita({ selectedCountry }),
+          fetchDataGdpPerCapitaAllCountries(),
           fetchDataDept({ selectedCountry }),
           fetchDataDebtAmountAllCountries(),
           fetchDataDeptGross({ selectedCountry }),
@@ -59,6 +67,8 @@ export function GetMainTabs() {
         setGrossData(gross);
         setGrossDataAllCountries(grossAllCountries);
         setReserveAllCountriesData(reservesAllCountries);
+        setGdpPerCapitaData(gdpPerCapita);
+        setGdpPerCapitaAllCountriesData(gdpPerCapitaAllCountries);
         setDebtData(debt);
         setDebtAmountAllCountriesData(debtAmountAllCountries);
         setDebtGrossData(debtGross);
@@ -88,6 +98,7 @@ export function GetMainTabs() {
         >
           <Tab label={t('monetaryReserves')} />
           <Tab label={t('grossDomesticProduct')} />
+          <Tab label={t('gdpPerCapita')} />
           <Tab label={t('debtAmount')} />
           <Tab label={t('debtToGross')} />
           <Tab label={t('moneySupply')} />
@@ -110,19 +121,26 @@ export function GetMainTabs() {
         )}
         {activeTab === 2 && (
           <div>
+            <SimpleLineGdpPerCapita data={gdpPerCapitaData} />
+            <div>{t('allCountriesForYear', { year: 2023 })}</div>
+            <BarColumnGdpPerCapitaAllCountries data={gdpPerCapitaAllCountriesData} />
+          </div>
+        )}
+        {activeTab === 3 && (
+          <div>
             <SimpleLineDept data={debtData} />
             <div>{t('allCountriesForYear', { year: 2022 })}</div>
             <BarColumnDebtAmountAllCountries data={debtAmountAllCountriesData} />
           </div>
         )}
-        {activeTab === 3 && (
+        {activeTab === 4 && (
           <div>
             <SimpleLineDeptGross data={debtGrossData} />
             <div>{t('allCountriesForYear', { year: 2022 })}</div>
             <BarColumnDebtGrossAllCountries data={debtGrossPercentageData} />
           </div>
         )}
-        {activeTab === 4 && (
+        {activeTab === 5 && (
           <div>
             <SimpleLineMoneySupply data={moneySupplyData} />
             <div>{t('allCountriesForYear', { year: 2022 })}</div>

@@ -16,10 +16,11 @@ import {
 import { getCountryName } from '../i18n/locales';
 import { useApplicationContext } from '../provider/CountriesProvider';
 
-const FEATURES = ['gdp', 'debt', 'reserves', 'population', 'debt-amount', 'life-expectancy'];
+const FEATURES = ['gdp', 'gdp-per-capita', 'debt', 'reserves', 'population', 'debt-amount', 'life-expectancy'];
 
 const FEATURE_LABELS = {
   gdp: 'featureGdp',
+  'gdp-per-capita': 'featureGdpPerCapita',
   debt: 'featureDebt',
   reserves: 'featureReserves',
   population: 'featurePopulation',

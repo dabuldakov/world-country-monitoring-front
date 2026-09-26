@@ -90,6 +90,28 @@ export function BarColumnGrossDataAllCountries({ data }) {
   );
 }
 
+export function BarColumnGdpPerCapitaAllCountries({ data }) {
+  const { locale, selectedCountry, t } = useApplicationContext();
+  const { onBarClick, onChartClick } = useCountryBarClick();
+  const formatValue = (value) => formatNumber(value, locale);
+  const chartData = sortDescending(Array.isArray(data) ? data : [], 'amount');
+
+  return (
+    <ResponsiveContainer width="100%" height={400}>
+      <BarChart data={chartData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }} onClick={onChartClick}>
+        <CartesianGrid strokeDasharray="3 3" />
+        <XAxis dataKey="countryCode" tickFormatter={(value) => getCountryName({ code: value }, locale)} />
+        <YAxis tickFormatter={formatValue} />
+        <Tooltip content={<CustomTooltip valueLabel={t('gdpPerCapita')} />} />
+        <Legend />
+        <Bar dataKey="amount" name={t('gdpPerCapita')} fill={DEFAULT_BAR_COLOR} activeBar={{ fill: ACTIVE_BAR_COLOR }} onClick={onBarClick}>
+          {countryCells(chartData, selectedCountry)}
+        </Bar>
+      </BarChart>
+    </ResponsiveContainer>
+  );
+}
+
 export function BarColumnDebtAmountAllCountries({ data }) {
   const { locale, selectedCountry, t } = useApplicationContext();
   const { onBarClick, onChartClick } = useCountryBarClick();

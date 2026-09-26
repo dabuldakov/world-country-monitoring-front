@@ -5,6 +5,8 @@ const reservesApi = 'api/wcm/v0/international-reserve/country';
 const reservesAllCountriesApi = 'api/wcm/v0/international-reserve/year';
 const grossProductApi = 'api/wcm/v0/gross-domestic-product/country';
 const grossProductAllCountriesApi = 'api/wcm/v0/gross-domestic-product/year';
+const gdpPerCapitaApi = 'api/wcm/v0/gross-domestic-product-per-capita/country';
+const gdpPerCapitaAllCountriesApi = 'api/wcm/v0/gross-domestic-product-per-capita/year';
 const debtApi = 'api/wcm/v0/debt/country';
 const debtGrossApi = 'api/wcm/v0/debt/debt-gross/country';
 const debtGrossPercentageApi = 'api/wcm/v0/debt/year';
@@ -32,6 +34,14 @@ export const fetchDataGrossDomesticAllCountries = async () => {
 
 export const fetchDataReservesAllCountries = async () => {
   return fetchData(`${baseUrl}/${reservesAllCountriesApi}/${'2023'}`);
+};
+
+export const fetchDataGdpPerCapita = async ({ selectedCountry }) => {
+  return fetchData(`${baseUrl}/${gdpPerCapitaApi}/${selectedCountry}`);
+};
+
+export const fetchDataGdpPerCapitaAllCountries = async () => {
+  return fetchData(`${baseUrl}/${gdpPerCapitaAllCountriesApi}/${'2023'}`);
 };
 
 export const fetchDataDept = async ({ selectedCountry }) => {

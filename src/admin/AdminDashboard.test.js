@@ -96,7 +96,7 @@ describe('AdminDashboard', () => {
     render(<AdminDashboard token="admin-token" onLogout={jest.fn()} />);
     await screen.findByText('user@example.com');
 
-    userEvent.click(screen.getAllByRole('button', { name: 'refreshCountry' })[3]);
+    userEvent.click(screen.getAllByRole('button', { name: 'refreshCountry' })[4]);
 
     await waitFor(() =>
       expect(enqueueRefreshJob).toHaveBeenCalledWith('admin-token', 'population', 'RUS'),

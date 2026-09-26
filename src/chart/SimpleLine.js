@@ -64,6 +64,29 @@ export function SimpleLineGross({ data }) {
   );
 }
 
+export function SimpleLineGdpPerCapita({ data }) {
+  const { locale, t } = useApplicationContext();
+  const formatValue = (value) => formatNumber(value, locale);
+
+  return (
+    <ResponsiveContainer width="100%" height={400}>
+      <LineChart
+        width={500}
+        height={300}
+        data={Array.isArray(data) ? data : []}
+        margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+      >
+        <CartesianGrid strokeDasharray="3 3" />
+        <XAxis dataKey="date" tickFormatter={(value) => formatDate(value, locale)} />
+        <YAxis tickFormatter={formatValue} />
+        <Tooltip labelFormatter={(value) => formatDate(value, locale)} formatter={formatValue} />
+        <Legend />
+        <Line type="monotone" dataKey="amount" name={t('gdpPerCapita')} stroke="#8884d8" activeDot={{ r: 8 }} strokeWidth={2} />
+      </LineChart>
+    </ResponsiveContainer>
+  );
+}
+
 export function SimpleLineDept({ data }) {
   const { locale, t } = useApplicationContext();
   const formatValue = (value) => formatNumber(value, locale);
