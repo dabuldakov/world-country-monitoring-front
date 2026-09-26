@@ -1,16 +1,26 @@
 import { useEffect, useState } from 'react';
 import { Box, CircularProgress, Tab, Tabs } from '@mui/material';
 
+import { BarColumnLifeExpectancyAllCountries } from '../chart/BarColumn';
 import { BarColumnPopulationAllCountries, PopulationSimpleLine } from '../chart/Population';
+import { SimpleLineLifeExpectancy } from '../chart/SimpleLine';
 import { useApplicationContext } from '../provider/CountriesProvider';
-import { fetchDataPopulation, fetchDataPopulationAllCountries } from '../rest/RestService';
+import {
+  fetchDataLifeExpectancy,
+  fetchDataLifeExpectancyAllCountries,
+  fetchDataPopulation,
+  fetchDataPopulationAllCountries,
+} from '../rest/RestService';
 
 const POPULATION_YEAR = 2023;
+const LIFE_EXPECTANCY_YEAR = 2023;
 
 export function GetSocialTab() {
   const { selectedCountry, t } = useApplicationContext();
   const [populationData, setPopulationData] = useState([]);
   const [populationAllCountries, setPopulationAllCountries] = useState([]);
+  const [lifeExpectancyData, setLifeExpectancyData] = useState([]);
+  const [lifeExpectancyAllCountries, setLifeExpectancyAllCountries] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState(0);
 
@@ -18,22 +28,30 @@ export function GetSocialTab() {
     let isCurrent = true;
     setPopulationData([]);
     setPopulationAllCountries([]);
+    setLifeExpectancyData([]);
+    setLifeExpectancyAllCountries([]);
     setIsLoading(true);
 
     const fetchData = async () => {
       try {
-        const [population, populationAll] = await Promise.all([
+        const [population, populationAll, lifeExpectancy, lifeExpectancyAll] = await Promise.all([
           fetchDataPopulation({ selectedCountry }),
           fetchDataPopulationAllCountries(POPULATION_YEAR),
+          fetchDataLifeExpectancy({ selectedCountry }),
+          fetchDataLifeExpectancyAllCountries(LIFE_EXPECTANCY_YEAR),
         ]);
         if (isCurrent) {
           setPopulationData(Array.isArray(population) ? population : []);
           setPopulationAllCountries(Array.isArray(populationAll) ? populationAll : []);
+          setLifeExpectancyData(Array.isArray(lifeExpectancy) ? lifeExpectancy : []);
+          setLifeExpectancyAllCountries(Array.isArray(lifeExpectancyAll) ? lifeExpectancyAll : []);
         }
       } catch (error) {
         if (isCurrent) {
           setPopulationData([]);
           setPopulationAllCountries([]);
+          setLifeExpectancyData([]);
+          setLifeExpectancyAllCountries([]);
           console.error('Error fetching population data:', error);
         }
       } finally {
@@ -88,7 +106,21 @@ export function GetSocialTab() {
           </div>
         )}
         {activeTab === 1 && <div>{t('withoutWork')}</div>}
-        {activeTab === 2 && <div>{t('lifeExpectancy')}</div>}
+        {activeTab === 2 && (
+          <div>
+            {isLoading ? (
+              <CircularProgress size={28} />
+            ) : lifeExpectancyData.length > 0 ? (
+              <div>
+                <SimpleLineLifeExpectancy data={lifeExpectancyData} />
+                <div>{t('allCountriesForYear', { year: LIFE_EXPECTANCY_YEAR })}</div>
+                <BarColumnLifeExpectancyAllCountries data={lifeExpectancyAllCountries} />
+              </div>
+            ) : (
+              <div>{t('lifeExpectancy')}: —</div>
+            )}
+          </div>
+        )}
         {activeTab === 3 && <div>{t('pension')}</div>}
       </div>
     </div>

@@ -110,6 +110,29 @@ export function SimpleLineDeptGross({ data }) {
   );
 }
 
+export function SimpleLineLifeExpectancy({ data }) {
+  const { locale, t } = useApplicationContext();
+  const formatValue = (value) => formatNumber(value, locale);
+
+  return (
+    <ResponsiveContainer width="100%" height={400}>
+      <LineChart
+        width={500}
+        height={300}
+        data={normalizeLifeExpectancy(data)}
+        margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+      >
+        <CartesianGrid strokeDasharray="3 3" />
+        <XAxis dataKey="date" tickFormatter={(value) => formatDate(value, locale)} />
+        <YAxis tickFormatter={formatValue} />
+        <Tooltip labelFormatter={(value) => formatDate(value, locale)} formatter={formatValue} />
+        <Legend />
+        <Line type="monotone" dataKey="years" name={t('lifeExpectancy')} stroke="#8884d8" activeDot={{ r: 8 }} strokeWidth={2} />
+      </LineChart>
+    </ResponsiveContainer>
+  );
+}
+
 export function SimpleLineMoneySupply({ data }) {
   const { locale, t } = useApplicationContext();
   const formatValue = (value) => formatNumber(value, locale);
@@ -168,6 +191,14 @@ function normalizeDebt(data) {
     ...item,
     foreign: normalizeNumber(item.foreign),
   }));
+}
+
+function normalizeLifeExpectancy(data) {
+  if (!Array.isArray(data)) {
+    console.error('Invalid data passed to normalizeLifeExpectancy:', data);
+    return [];
+  }
+  return data;
 }
 
 function normalizeMoneySupply(data) {

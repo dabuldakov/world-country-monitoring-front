@@ -2,10 +2,17 @@ import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import { GetSocialTab } from './SocialTab';
-import { fetchDataPopulation, fetchDataPopulationAllCountries } from '../rest/RestService';
+import {
+  fetchDataLifeExpectancy,
+  fetchDataLifeExpectancyAllCountries,
+  fetchDataPopulation,
+  fetchDataPopulationAllCountries,
+} from '../rest/RestService';
 import { useApplicationContext } from '../provider/CountriesProvider';
 
 jest.mock('../rest/RestService', () => ({
+  fetchDataLifeExpectancy: jest.fn(),
+  fetchDataLifeExpectancyAllCountries: jest.fn(),
   fetchDataPopulation: jest.fn(),
   fetchDataPopulationAllCountries: jest.fn(),
 }));
@@ -31,6 +38,8 @@ describe('GetSocialTab', () => {
       t: (key) => key,
     });
     fetchDataPopulationAllCountries.mockResolvedValue([]);
+    fetchDataLifeExpectancy.mockResolvedValue([]);
+    fetchDataLifeExpectancyAllCountries.mockResolvedValue([]);
   });
 
   afterEach(() => {

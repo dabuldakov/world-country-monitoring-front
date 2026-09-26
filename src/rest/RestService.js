@@ -12,6 +12,8 @@ const debtAmountAllCountriesApi = 'api/wcm/v0/debt/debt-amount/year';
 const moneySupplyApi = 'api/wcm/v0/money-supply/country';
 const countryApi = 'api/wcm/v0/country/all';
 const populationApi = 'api/wcm/v0/population/country';
+const lifeExpectancyApi = 'api/wcm/v0/life-expectancy/country';
+const lifeExpectancyAllCountriesApi = 'api/wcm/v0/life-expectancy/year';
 const feedbackApi = 'api/wcm/v0/feedback';
 const visitsApi = 'api/wcm/v0/visits';
 const adminApi = 'api/wcm/v0/admin';
@@ -54,6 +56,14 @@ export const fetchDataPopulation = async ({ selectedCountry }) => {
 
 export const fetchDataPopulationAllCountries = async (year) => {
   return fetchData(`${baseUrl}/api/wcm/v0/population/year/${year}`);
+};
+
+export const fetchDataLifeExpectancy = async ({ selectedCountry }) => {
+  return fetchData(`${baseUrl}/${lifeExpectancyApi}/${selectedCountry}`);
+};
+
+export const fetchDataLifeExpectancyAllCountries = async () => {
+  return fetchData(`${baseUrl}/${lifeExpectancyAllCountriesApi}/${'2023'}`);
 };
 
 export const fetchDataMoneySupply = async ({ selectedCountry }) => {

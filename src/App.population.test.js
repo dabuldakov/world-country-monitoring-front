@@ -6,6 +6,8 @@ import { fetchDataCountries, fetchDataPopulation } from './rest/RestService';
 
 jest.mock('./rest/RestService', () => ({
   fetchDataCountries: jest.fn(),
+  fetchDataLifeExpectancy: jest.fn(() => Promise.resolve([])),
+  fetchDataLifeExpectancyAllCountries: jest.fn(() => Promise.resolve([])),
   fetchDataPopulation: jest.fn(),
   fetchDataPopulationAllCountries: jest.fn(() => Promise.resolve([])),
   registerVisit: jest.fn(() => Promise.resolve({ count: 1 })),

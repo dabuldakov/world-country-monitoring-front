@@ -104,6 +104,29 @@ export function BarColumnDebtAmountAllCountries({ data }) {
   );
 }
 
+export function BarColumnLifeExpectancyAllCountries({ data }) {
+  const { locale, t } = useApplicationContext();
+  const { onBarClick, onChartClick } = useCountryBarClick();
+  const formatValue = (value) => formatNumber(value, locale);
+
+  return (
+    <ResponsiveContainer width="100%" height={400}>
+      <BarChart
+        data={sortDescending(Array.isArray(data) ? data : [], 'years')}
+        margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+        onClick={onChartClick}
+      >
+        <CartesianGrid strokeDasharray="3 3" />
+        <XAxis dataKey="countryCode" tickFormatter={(value) => getCountryName({ code: value }, locale)} />
+        <YAxis tickFormatter={formatValue} />
+        <Tooltip content={<CustomTooltip valueLabel={t('lifeExpectancy')} />} />
+        <Legend />
+        <Bar dataKey="years" name={t('lifeExpectancy')} fill="#8884d8" activeBar={{ fill: ACTIVE_BAR_COLOR }} onClick={onBarClick} />
+      </BarChart>
+    </ResponsiveContainer>
+  );
+}
+
 export function BarColumnReservesAllCountries({ data }) {
   const { locale, t } = useApplicationContext();
   const { onBarClick, onChartClick } = useCountryBarClick();

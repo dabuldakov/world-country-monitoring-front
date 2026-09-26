@@ -16,7 +16,7 @@ import {
 import { getCountryName } from '../i18n/locales';
 import { useApplicationContext } from '../provider/CountriesProvider';
 
-const FEATURES = ['gdp', 'debt', 'reserves', 'population', 'debt-amount'];
+const FEATURES = ['gdp', 'debt', 'reserves', 'population', 'debt-amount', 'life-expectancy'];
 
 const FEATURE_LABELS = {
   gdp: 'featureGdp',
@@ -24,6 +24,7 @@ const FEATURE_LABELS = {
   reserves: 'featureReserves',
   population: 'featurePopulation',
   'debt-amount': 'featureDebtAmount',
+  'life-expectancy': 'featureLifeExpectancy',
 };
 
 const TERMINAL_STATUSES = ['SUCCESS', 'PARTIAL', 'FAILED'];
