@@ -3,20 +3,23 @@ import userEvent from '@testing-library/user-event';
 
 import { AdminDashboard } from './AdminDashboard';
 import {
+  enqueueRefreshJob,
   fetchAdminFeedback,
   fetchAdminVisits,
   fetchFeatureStatuses,
   fetchLastRefill,
-  triggerFeatureRefillCountry,
   triggerRefillAll,
 } from '../rest/RestService';
 import { useApplicationContext } from '../provider/CountriesProvider';
 
 jest.mock('../rest/RestService', () => ({
+  enqueueRefreshJob: jest.fn(),
   fetchAdminFeedback: jest.fn(),
   fetchAdminVisits: jest.fn(),
   fetchFeatureStatuses: jest.fn(),
   fetchLastRefill: jest.fn(),
+  fetchRefreshJob: jest.fn(),
+  retryRefreshJob: jest.fn(),
   triggerFeatureRefillAll: jest.fn(),
   triggerFeatureRefillCountry: jest.fn(),
   triggerRefillAll: jest.fn(),
@@ -68,13 +71,15 @@ describe('AdminDashboard', () => {
     expect(screen.getByText('featurePopulation')).toBeInTheDocument();
   });
 
-  test('triggers refill for one feature and one country', async () => {
-    triggerFeatureRefillCountry.mockResolvedValue({
-      operation: 'population:RUS',
-      status: 'SUCCESS',
-      processedCount: 1,
-      startedAt: '2026-01-01T00:00:00',
-      finishedAt: '2026-01-01T00:00:01',
+  test('queues refresh job for one feature and one country', async () => {
+    enqueueRefreshJob.mockResolvedValue({
+      id: 1,
+      feature: 'population',
+      countryCode: 'RUS',
+      status: 'QUEUED',
+      total: 1,
+      processed: 0,
+      failed: 0,
     });
 
     render(<AdminDashboard token="admin-token" onLogout={jest.fn()} />);
@@ -83,7 +88,7 @@ describe('AdminDashboard', () => {
     userEvent.click(screen.getAllByRole('button', { name: 'refreshCountry' })[3]);
 
     await waitFor(() =>
-      expect(triggerFeatureRefillCountry).toHaveBeenCalledWith('admin-token', 'population', 'RUS'),
+      expect(enqueueRefreshJob).toHaveBeenCalledWith('admin-token', 'population', 'RUS'),
     );
   });
 

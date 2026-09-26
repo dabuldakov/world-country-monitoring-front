@@ -108,6 +108,26 @@ export const triggerFeatureRefillCountry = async (token, feature, countryCode) =
   });
 };
 
+export const enqueueRefreshJob = async (token, feature, countryCode) => {
+  return request(`${baseUrl}/${adminApi}/refill/jobs`, {
+    method: 'POST',
+    token,
+    body: { feature, countryCode: countryCode || null },
+  });
+};
+
+export const fetchRefreshJob = async (token, jobId) => {
+  return request(`${baseUrl}/${adminApi}/refill/jobs/${jobId}`, { token });
+};
+
+export const retryRefreshJob = async (token, jobId) => {
+  return request(`${baseUrl}/${adminApi}/refill/jobs/${jobId}/retry`, { method: 'POST', token });
+};
+
+export const fetchCountryStatuses = async (token, feature) => {
+  return request(`${baseUrl}/${adminApi}/refill/country-status?feature=${feature}`, { token });
+};
+
 const request = async (url, options = {}) => {
   const headers = { 'X-WCM-Client': clientKey };
 

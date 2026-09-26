@@ -1,9 +1,12 @@
 import {
   adminLogin,
+  enqueueRefreshJob,
   fetchAdminVisits,
   fetchDataPopulation,
   fetchFeatureStatuses,
+  fetchRefreshJob,
   registerVisit,
+  retryRefreshJob,
   submitFeedback,
   triggerFeatureRefillCountry,
 } from './RestService';
@@ -186,5 +189,43 @@ describe('site API', () => {
       'http://localhost:8080/api/wcm/v0/admin/refill/population/country/RUS',
       expect.objectContaining({ method: 'POST' }),
     );
+  });
+
+  test('enqueues refresh job', async () => {
+    globalThis.fetch = jest.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: jest.fn().mockResolvedValue({ id: 1, status: 'QUEUED' }),
+    });
+
+    await expect(
+      enqueueRefreshJob('admin-token', 'population', 'RUS'),
+    ).resolves.toEqual({ id: 1, status: 'QUEUED' });
+    expect(globalThis.fetch).toHaveBeenCalledWith(
+      'http://localhost:8080/api/wcm/v0/admin/refill/jobs',
+      expect.objectContaining({
+        method: 'POST',
+        body: JSON.stringify({ feature: 'population', countryCode: 'RUS' }),
+      }),
+    );
+  });
+
+  test('loads refresh job and retries failed countries', async () => {
+    globalThis.fetch = jest.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: jest.fn().mockResolvedValue({ id: 1, status: 'PARTIAL', failed: 1 }),
+    });
+
+    await expect(fetchRefreshJob('admin-token', 1)).resolves.toEqual({
+      id: 1,
+      status: 'PARTIAL',
+      failed: 1,
+    });
+    await expect(retryRefreshJob('admin-token', 1)).resolves.toEqual({
+      id: 1,
+      status: 'PARTIAL',
+      failed: 1,
+    });
   });
 });

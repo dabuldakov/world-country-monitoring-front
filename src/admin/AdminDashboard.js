@@ -1,13 +1,14 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Alert, Button, CircularProgress, Paper, Table, TableBody, TableCell, TableHead, TableRow, TextField } from '@mui/material';
+import { Alert, Button, CircularProgress, LinearProgress, Paper, Table, TableBody, TableCell, TableHead, TableRow, TextField } from '@mui/material';
 
 import {
+  enqueueRefreshJob,
   fetchAdminFeedback,
   fetchAdminVisits,
   fetchFeatureStatuses,
   fetchLastRefill,
-  triggerFeatureRefillAll,
-  triggerFeatureRefillCountry,
+  fetchRefreshJob,
+  retryRefreshJob,
   triggerRefillAll,
   triggerRefillCountry,
 } from '../rest/RestService';
@@ -22,6 +23,8 @@ const FEATURE_LABELS = {
   population: 'featurePopulation',
 };
 
+const TERMINAL_STATUSES = ['SUCCESS', 'PARTIAL', 'FAILED'];
+
 function formatUpdatedAt(milliseconds) {
   return milliseconds ? new Date(milliseconds).toLocaleString() : '—';
 }
@@ -32,6 +35,7 @@ export function AdminDashboard({ token, onLogout }) {
   const [visits, setVisits] = useState(0);
   const [lastRefill, setLastRefill] = useState(null);
   const [featureStatuses, setFeatureStatuses] = useState([]);
+  const [activeJob, setActiveJob] = useState(null);
   const [countryCode, setCountryCode] = useState('RUS');
   const [isLoading, setIsLoading] = useState(true);
   const [isRefilling, setIsRefilling] = useState(false);
@@ -74,6 +78,29 @@ export function AdminDashboard({ token, onLogout }) {
     loadDashboard();
   }, [loadDashboard]);
 
+  const activeJobId = activeJob?.id;
+  const activeJobStatus = activeJob?.status;
+
+  useEffect(() => {
+    if (!activeJobId || TERMINAL_STATUSES.includes(activeJobStatus)) {
+      return undefined;
+    }
+
+    const interval = setInterval(async () => {
+      try {
+        const job = await fetchRefreshJob(token, activeJobId);
+        setActiveJob(job);
+        if (TERMINAL_STATUSES.includes(job.status)) {
+          await loadDashboard();
+        }
+      } catch (requestError) {
+        handleError(requestError);
+      }
+    }, 2000);
+
+    return () => clearInterval(interval);
+  }, [activeJobId, activeJobStatus, handleError, loadDashboard, token]);
+
   const runRefill = async (action) => {
     setIsRefilling(true);
     setError('');
@@ -89,8 +116,46 @@ export function AdminDashboard({ token, onLogout }) {
     }
   };
 
+  const enqueueAndTrack = async (feature, code) => {
+    setIsRefilling(true);
+    setError('');
+
+    try {
+      const job = await enqueueRefreshJob(token, feature, code);
+      setActiveJob(job);
+      await loadDashboard();
+    } catch (requestError) {
+      handleError(requestError);
+    } finally {
+      setIsRefilling(false);
+    }
+  };
+
+  const retryActiveJob = async () => {
+    if (!activeJobId) {
+      return;
+    }
+
+    setIsRefilling(true);
+    setError('');
+
+    try {
+      const job = await retryRefreshJob(token, activeJobId);
+      setActiveJob(job);
+      await loadDashboard();
+    } catch (requestError) {
+      handleError(requestError);
+    } finally {
+      setIsRefilling(false);
+    }
+  };
+
   const statusByFeature = (feature) =>
     featureStatuses.find((item) => item.feature === feature);
+
+  const progress = activeJob?.total
+    ? Math.round((activeJob.processed * 100) / activeJob.total)
+    : 0;
 
   return (
     <div>
@@ -128,6 +193,23 @@ export function AdminDashboard({ token, onLogout }) {
         </div>
       </Paper>
 
+      {activeJob && (
+        <Paper sx={{ p: 2, mb: 2 }}>
+          <h4>{t('refreshJob')} #{activeJob.id}</h4>
+          <div>{t('status')}: {activeJob.status}</div>
+          <div>{t('processed')}: {activeJob.processed}/{activeJob.total}</div>
+          <LinearProgress variant="determinate" value={progress} sx={{ my: 1 }} />
+          {activeJob.failed > 0 && (
+            <div>
+              <div>{t('failedCountries')}: {activeJob.failed}</div>
+              <Button size="small" disabled={isRefilling} onClick={retryActiveJob}>
+                {t('retryFailed')}
+              </Button>
+            </div>
+          )}
+        </Paper>
+      )}
+
       <Paper sx={{ p: 2, mb: 2 }}>
         <h4>{t('updateByFeature')}</h4>
         <Table size="small">
@@ -151,16 +233,14 @@ export function AdminDashboard({ token, onLogout }) {
                     <Button
                       size="small"
                       disabled={isRefilling}
-                      onClick={() => runRefill(() => triggerFeatureRefillAll(token, feature))}
+                      onClick={() => enqueueAndTrack(feature, null)}
                     >
                       {t('refreshAll')}
                     </Button>
                     <Button
                       size="small"
                       disabled={isRefilling}
-                      onClick={() =>
-                        runRefill(() => triggerFeatureRefillCountry(token, feature, countryCode))
-                      }
+                      onClick={() => enqueueAndTrack(feature, countryCode)}
                     >
                       {t('refreshCountry')}
                     </Button>
