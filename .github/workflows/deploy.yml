@@ -9,9 +9,13 @@ concurrency:
   group: deploy-${{ github.repository }}
   cancel-in-progress: true
 
+permissions:
+  contents: read
+  packages: write
+
 jobs:
   deploy:
-    name: Deploy on VPS
+    name: Build and deploy on VPS
     runs-on: ubuntu-latest
     steps:
       - name: Verify deploy secrets
@@ -31,7 +35,24 @@ jobs:
             exit 1
           fi
           echo "All deploy secrets are present"
-      - name: Pull main and rebuild frontend
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build and push frontend image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          build-args: |
+            REACT_APP_API_URL=/api
+            REACT_APP_CLIENT_KEY=wcm-frontend
+          tags: ghcr.io/dabuldakov/world-country-monitoring-front:latest
+      - name: Deploy on VPS
         uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.DEPLOY_HOST }}
@@ -44,5 +65,9 @@ jobs:
             git fetch --prune origin main
             git reset --hard origin/main
             docker network inspect wcm-net >/dev/null 2>&1 || docker network create wcm-net
-            docker compose up -d --build
+            if [ -n "${{ secrets.GHCR_TOKEN }}" ]; then
+              echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+            fi
+            docker compose pull
+            docker compose up -d --no-build
             docker image prune -f
