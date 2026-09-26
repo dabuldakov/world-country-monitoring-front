@@ -8,6 +8,7 @@ const grossProductAllCountriesApi = 'api/wcm/v0/gross-domestic-product/year';
 const debtApi = 'api/wcm/v0/debt/country';
 const debtGrossApi = 'api/wcm/v0/debt/debt-gross/country';
 const debtGrossPercentageApi = 'api/wcm/v0/debt/year';
+const debtAmountAllCountriesApi = 'api/wcm/v0/debt/debt-amount/year';
 const moneySupplyApi = 'api/wcm/v0/money-supply/country';
 const countryApi = 'api/wcm/v0/country/all';
 const populationApi = 'api/wcm/v0/population/country';
@@ -41,6 +42,10 @@ export const fetchDataDeptGross = async ({ selectedCountry }) => {
 
 export const fetchDataDebtGrossPercentageAllCountries = async () => {
   return fetchData(`${baseUrl}/${debtGrossPercentageApi}/${'2022'}`);
+};
+
+export const fetchDataDebtAmountAllCountries = async () => {
+  return fetchData(`${baseUrl}/${debtAmountAllCountriesApi}/${'2022'}`);
 };
 
 export const fetchDataPopulation = async ({ selectedCountry }) => {

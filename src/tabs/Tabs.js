@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Box, Tab, Tabs } from '@mui/material';
 
 import {
+  BarColumnDebtAmountAllCountries,
   BarColumnDebtGrossAllCountries,
   BarColumnGrossDataAllCountries,
   BarColumnReservesAllCountries,
@@ -15,6 +16,7 @@ import {
 } from '../chart/SimpleLine';
 import { useApplicationContext } from '../provider/CountriesProvider';
 import {
+  fetchDataDebtAmountAllCountries,
   fetchDataDebtGrossPercentageAllCountries,
   fetchDataDept,
   fetchDataDeptGross,
@@ -32,6 +34,7 @@ export function GetMainTabs() {
   const [grossData, setGrossData] = useState([]);
   const [grossDataAllCountries, setGrossDataAllCountries] = useState([]);
   const [debtData, setDebtData] = useState([]);
+  const [debtAmountAllCountriesData, setDebtAmountAllCountriesData] = useState([]);
   const [debtGrossData, setDebtGrossData] = useState([]);
   const [debtGrossPercentageData, setDebtGrossPercentageData] = useState([]);
   const [moneySupplyData, setMoneySupplyData] = useState([]);
@@ -40,12 +43,13 @@ export function GetMainTabs() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [reserves, gross, grossAllCountries, reservesAllCountries, debt, debtGross, debtGrossPercentage, moneySupply] = await Promise.all([
+        const [reserves, gross, grossAllCountries, reservesAllCountries, debt, debtAmountAllCountries, debtGross, debtGrossPercentage, moneySupply] = await Promise.all([
           fetchDataReserves({ selectedCountry }),
           fetchDataGrossDomestic({ selectedCountry }),
           fetchDataGrossDomesticAllCountries(),
           fetchDataReservesAllCountries(),
           fetchDataDept({ selectedCountry }),
+          fetchDataDebtAmountAllCountries(),
           fetchDataDeptGross({ selectedCountry }),
           fetchDataDebtGrossPercentageAllCountries(),
           fetchDataMoneySupply({ selectedCountry }),
@@ -56,6 +60,7 @@ export function GetMainTabs() {
         setGrossDataAllCountries(grossAllCountries);
         setReserveAllCountriesData(reservesAllCountries);
         setDebtData(debt);
+        setDebtAmountAllCountriesData(debtAmountAllCountries);
         setDebtGrossData(debtGross);
         setDebtGrossPercentageData(debtGrossPercentage);
         setMoneySupplyData(moneySupply);
@@ -83,7 +88,7 @@ export function GetMainTabs() {
         >
           <Tab label={t('monetaryReserves')} />
           <Tab label={t('grossDomesticProduct')} />
-          <Tab label={t('debt')} />
+          <Tab label={t('debtAmount')} />
           <Tab label={t('debtToGross')} />
           <Tab label={t('moneySupply')} />
         </Tabs>
@@ -103,7 +108,13 @@ export function GetMainTabs() {
             <BarColumnGrossDataAllCountries data={grossDataAllCountries} />
           </div>
         )}
-        {activeTab === 2 && <SimpleLineDept data={debtData} />}
+        {activeTab === 2 && (
+          <div>
+            <SimpleLineDept data={debtData} />
+            <div>{t('allCountriesForYear', { year: 2022 })}</div>
+            <BarColumnDebtAmountAllCountries data={debtAmountAllCountriesData} />
+          </div>
+        )}
         {activeTab === 3 && (
           <div>
             <SimpleLineDeptGross data={debtGrossData} />

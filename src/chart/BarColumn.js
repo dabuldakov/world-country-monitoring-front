@@ -81,6 +81,29 @@ export function BarColumnGrossDataAllCountries({ data }) {
   );
 }
 
+export function BarColumnDebtAmountAllCountries({ data }) {
+  const { locale, t } = useApplicationContext();
+  const { onBarClick, onChartClick } = useCountryBarClick();
+  const formatValue = (value) => formatNumber(value, locale);
+
+  return (
+    <ResponsiveContainer width="100%" height={400}>
+      <BarChart
+        data={normalizeDebtAmountData(data)}
+        margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+        onClick={onChartClick}
+      >
+        <CartesianGrid strokeDasharray="3 3" />
+        <XAxis dataKey="countryCode" tickFormatter={(value) => getCountryName({ code: value }, locale)} />
+        <YAxis tickFormatter={formatValue} />
+        <Tooltip content={<CustomTooltip valueLabel={t('debtAmount')} />} />
+        <Legend />
+        <Bar dataKey="foreign" name={t('debtAmount')} fill="#8884d8" activeBar={{ fill: ACTIVE_BAR_COLOR }} onClick={onBarClick} />
+      </BarChart>
+    </ResponsiveContainer>
+  );
+}
+
 export function BarColumnReservesAllCountries({ data }) {
   const { locale, t } = useApplicationContext();
   const { onBarClick, onChartClick } = useCountryBarClick();
@@ -112,6 +135,17 @@ function normalizeReservesData(data) {
   return data.map((item) => ({
     ...item,
     amount: normalizeNumber(item.amount),
+  }));
+}
+
+function normalizeDebtAmountData(data) {
+  if (!Array.isArray(data)) {
+    console.error('Invalid data passed to normalizeDebtAmountData:', data);
+    return [];
+  }
+  return data.map((item) => ({
+    ...item,
+    foreign: normalizeNumber(item.foreign),
   }));
 }
 
