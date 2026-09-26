@@ -7,6 +7,7 @@ import { fetchDataCountries, fetchDataPopulation } from './rest/RestService';
 jest.mock('./rest/RestService', () => ({
   fetchDataCountries: jest.fn(),
   fetchDataPopulation: jest.fn(),
+  fetchDataPopulationAllCountries: jest.fn(() => Promise.resolve([])),
   registerVisit: jest.fn(() => Promise.resolve({ count: 1 })),
   submitFeedback: jest.fn(),
 }));
@@ -16,6 +17,7 @@ jest.mock('./tabs/Tabs', () => ({
 }));
 
 jest.mock('./chart/Population', () => ({
+  BarColumnPopulationAllCountries: () => <output data-testid="population-countries-chart" />,
   PopulationSimpleLine: ({ data }) => <output data-testid="population-chart">{data.length}</output>,
 }));
 

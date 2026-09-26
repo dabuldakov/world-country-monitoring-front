@@ -2,11 +2,12 @@ import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import { GetSocialTab } from './SocialTab';
-import { fetchDataPopulation } from '../rest/RestService';
+import { fetchDataPopulation, fetchDataPopulationAllCountries } from '../rest/RestService';
 import { useApplicationContext } from '../provider/CountriesProvider';
 
 jest.mock('../rest/RestService', () => ({
   fetchDataPopulation: jest.fn(),
+  fetchDataPopulationAllCountries: jest.fn(),
 }));
 
 jest.mock('../provider/CountriesProvider', () => ({
@@ -14,6 +15,7 @@ jest.mock('../provider/CountriesProvider', () => ({
 }));
 
 jest.mock('../chart/Population', () => ({
+  BarColumnPopulationAllCountries: () => <output data-testid="population-countries-chart" />,
   PopulationSimpleLine: ({ data }) => <output data-testid="population-chart">{data.length}</output>,
 }));
 
@@ -25,8 +27,10 @@ describe('GetSocialTab', () => {
     consoleError = jest.spyOn(console, 'error').mockImplementation(() => {});
     useApplicationContext.mockReturnValue({
       selectedCountry: 'RUS',
+      setSelectedCountry: jest.fn(),
       t: (key) => key,
     });
+    fetchDataPopulationAllCountries.mockResolvedValue([]);
   });
 
   afterEach(() => {

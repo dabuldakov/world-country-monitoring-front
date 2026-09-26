@@ -1,30 +1,39 @@
 import { useEffect, useState } from 'react';
 import { Box, CircularProgress, Tab, Tabs } from '@mui/material';
 
-import { PopulationSimpleLine } from '../chart/Population';
+import { BarColumnPopulationAllCountries, PopulationSimpleLine } from '../chart/Population';
 import { useApplicationContext } from '../provider/CountriesProvider';
-import { fetchDataPopulation } from '../rest/RestService';
+import { fetchDataPopulation, fetchDataPopulationAllCountries } from '../rest/RestService';
+
+const POPULATION_YEAR = 2023;
 
 export function GetSocialTab() {
   const { selectedCountry, t } = useApplicationContext();
   const [populationData, setPopulationData] = useState([]);
+  const [populationAllCountries, setPopulationAllCountries] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState(0);
 
   useEffect(() => {
     let isCurrent = true;
     setPopulationData([]);
+    setPopulationAllCountries([]);
     setIsLoading(true);
 
     const fetchData = async () => {
       try {
-        const population = await fetchDataPopulation({ selectedCountry });
+        const [population, populationAll] = await Promise.all([
+          fetchDataPopulation({ selectedCountry }),
+          fetchDataPopulationAllCountries(POPULATION_YEAR),
+        ]);
         if (isCurrent) {
           setPopulationData(Array.isArray(population) ? population : []);
+          setPopulationAllCountries(Array.isArray(populationAll) ? populationAll : []);
         }
       } catch (error) {
         if (isCurrent) {
           setPopulationData([]);
+          setPopulationAllCountries([]);
           console.error('Error fetching population data:', error);
         }
       } finally {
@@ -70,6 +79,8 @@ export function GetSocialTab() {
               <div>
                 <PopulationSimpleLine data={populationData} />
                 <div>{t('population')}: {getPopulationRange(populationData)}</div>
+                <div>{t('allCountriesForYear', { year: POPULATION_YEAR })}</div>
+                <BarColumnPopulationAllCountries data={populationAllCountries} />
               </div>
             ) : (
               <div>{t('population')}: —</div>

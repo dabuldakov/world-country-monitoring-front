@@ -47,6 +47,10 @@ export const fetchDataPopulation = async ({ selectedCountry }) => {
   return fetchData(`${baseUrl}/${populationApi}/${selectedCountry}`);
 };
 
+export const fetchDataPopulationAllCountries = async (year) => {
+  return fetchData(`${baseUrl}/api/wcm/v0/population/year/${year}`);
+};
+
 export const fetchDataMoneySupply = async ({ selectedCountry }) => {
   return fetchData(`${baseUrl}/${moneySupplyApi}/${selectedCountry}`);
 };
